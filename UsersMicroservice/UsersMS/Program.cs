@@ -7,10 +7,11 @@ using UsersMS.Core.Application.Logger;
 using UsersMS.Core.Infrastructure.Crypto;
 using UsersMS.Core.Infrastructure.Data;
 using UsersMS.Core.Infrastructure.Logger;
-//using UsersMS.src.Users.Application.Commands.CreateUser.Types;
-//using UsersMS.src.Users.Application.Repositories;
-//using UsersMS.src.Users.Infrastructure.Repositories;
-//using UsersMS.src.Users.Infrastructure.UUID;
+using UsersMS.src.Users.Application.Commands.CreateUser.Types;
+using UsersMS.src.Users.Application.Commands.CreateDepto.Types;
+using UsersMS.src.Users.Application.Repositories;
+using UsersMS.src.Users.Infrastructure.Repositories;
+using UsersMS.src.Users.Infrastructure.UUID;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -20,9 +21,11 @@ builder.Services.AddLogging();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddControllers();
 builder.Services.AddSingleton<MongoDbService>();
-//builder.Services.AddTransient<IValidator<CreateUserCommand>, CreateUserCommandValidator>();
-//builder.Services.AddScoped<IUserRepository, MongoUserRepository>();
-//builder.Services.AddTransient<IdGenerator<string>, GuidGenerator>();
+builder.Services.AddTransient<IValidator<CreateUserCommand>, CreateUserCommandValidator>();
+builder.Services.AddTransient<IValidator<CreateDeptoCommand>, CreateDeptoCommandValidator>();
+builder.Services.AddScoped<IUserRepository, MongoUserRepository>();
+builder.Services.AddScoped<IDeptoRepository, MongoDeptoRepository>();
+builder.Services.AddTransient<IdGenerator<string>, GuidGenerator>();
 builder.Services.AddTransient<ICrypto, BcryptCryptoService>();
 builder.Services.AddScoped<ILoggerContract, LoggerAspect>();
 builder.Services.AddSwaggerGen(c =>
