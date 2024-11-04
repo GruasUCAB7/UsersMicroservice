@@ -9,6 +9,5 @@ namespace UsersMS.src.Users.Application.Repositories
         Task<bool> ExistByName(string name);
         Task<List<Department>> GetAll(int perPage, int page);
         Task<Optional<Department>> GetById(string id);
-        Task<Result<Department>> Save(Department Depto);
-    }
+        Task<Result<Department>> Save(Department Depto);    }
 }

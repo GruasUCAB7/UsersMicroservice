@@ -6,7 +6,7 @@ namespace UsersMS.src.Users.Domain.ValueObjects
     {
         public static string GetValue(this UserType userType)
         {
-            if (userType == UserType.Operator || userType == UserType.Driver || userType == UserType.Provider)
+            if (userType == UserType.Operator)
             {
                 return userType.ToString();
             }

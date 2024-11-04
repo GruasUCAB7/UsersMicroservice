@@ -19,6 +19,8 @@
 
         public bool HasValue => _hasValue;
 
+        public bool IsEmpty { get; internal set; }
+
         public static Optional<T> Of(T value)
         {
             return new Optional<T>(value, true);

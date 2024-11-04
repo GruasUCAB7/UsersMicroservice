@@ -9,23 +9,29 @@ namespace UsersMS.src.Users.Infrastructure.Models
         [BsonElement("id"), BsonRepresentation(BsonType.ObjectId)]
         public required string Id { get; set; }
 
-        [BsonElement("name"), BsonRepresentation(BsonType.String)]
+        [BsonElement("name")]
         public required string Name { get; set; }
 
-        [BsonElement("email"), BsonRepresentation(BsonType.String)]
+        [BsonElement("email")]
         public required string Email { get; set; }
 
-        [BsonElement("phone"), BsonRepresentation(BsonType.String)]
+        [BsonElement("phone")]
         public required string Phone { get; set; }
 
-        [BsonElement("userType"), BsonRepresentation(BsonType.String)]
+        [BsonElement("userType")]
         public required string UserType { get; set; }
 
-        [BsonElement("status"), BsonRepresentation(BsonType.Boolean)]
-        public required bool Status { get; set; }
+        [BsonElement("isActive")]
+        public required bool IsActive { get; set; }
 
-        [BsonElement("department"), BsonRepresentation(BsonType.String)]
+        [BsonElement("department")]
         public required string Department { get; set; }
+
+        [BsonElement("createdDate")]
+        public required DateTime CreatedDate { get; set; }
+
+        [BsonElement("updatedDate")]
+        public required DateTime UpdatedDate { get; set; }
     }
 }
 

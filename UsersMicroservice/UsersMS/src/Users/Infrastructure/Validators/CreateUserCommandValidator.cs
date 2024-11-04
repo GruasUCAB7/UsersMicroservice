@@ -1,7 +1,8 @@
 ﻿using FluentValidation;
+using UsersMS.src.Users.Application.Commands.CreateUser.Types;
 using UsersMS.src.Users.Domain.ValueObjects;
 
-namespace UsersMS.src.Users.Application.Commands.CreateUser.Types 
+namespace UsersMS.src.Users.Infrastructure.Validators
 {
     public class CreateUserCommandValidator : AbstractValidator<CreateUserCommand>
     {
