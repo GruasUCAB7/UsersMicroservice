@@ -1,6 +1,7 @@
 ﻿using FluentValidation;
+using UsersMS.src.Users.Application.Commands.CreateDepto.Types;
 
-namespace UsersMS.src.Users.Application.Commands.CreateDepto.Types 
+namespace UsersMS.src.Users.Infrastructure.Validators
 {
     public class CreateDeptoCommandValidator : AbstractValidator<CreateDeptoCommand>
     {

@@ -9,9 +9,11 @@ using UsersMS.Core.Infrastructure.Data;
 using UsersMS.Core.Infrastructure.Logger;
 using UsersMS.src.Users.Application.Commands.CreateUser.Types;
 using UsersMS.src.Users.Application.Commands.CreateDepto.Types;
+using UsersMS.src.Users.Application.Commands.UpdateUser.Types;
 using UsersMS.src.Users.Application.Repositories;
 using UsersMS.src.Users.Infrastructure.Repositories;
-using UsersMS.src.Users.Infrastructure.UUID;
+using UsersMS.Core.Infrastructure.UUID;
+using UsersMS.src.Users.Infrastructure.Validators;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -23,6 +25,7 @@ builder.Services.AddControllers();
 builder.Services.AddSingleton<MongoDbService>();
 builder.Services.AddTransient<IValidator<CreateUserCommand>, CreateUserCommandValidator>();
 builder.Services.AddTransient<IValidator<CreateDeptoCommand>, CreateDeptoCommandValidator>();
+builder.Services.AddTransient<IValidator<UpdateUserCommand>, UpdateUserCommandValidator>();
 builder.Services.AddScoped<IUserRepository, MongoUserRepository>();
 builder.Services.AddScoped<IDeptoRepository, MongoDeptoRepository>();
 builder.Services.AddTransient<IdGenerator<string>, GuidGenerator>();

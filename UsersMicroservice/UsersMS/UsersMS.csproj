@@ -16,7 +16,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="src\Users\Application\Queries\" />
+    <Folder Include="src\Users\Application\Commands\UpdateUser\Types\" />
+    <Folder Include="src\Users\Application\Queries\GetById\Types\" />
   </ItemGroup>
 
 </Project>

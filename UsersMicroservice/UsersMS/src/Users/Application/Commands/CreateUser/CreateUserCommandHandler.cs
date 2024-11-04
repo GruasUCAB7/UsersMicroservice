@@ -6,6 +6,7 @@ using UsersMS.src.Users.Application.Repositories;
 using UsersMS.src.Users.Domain.ValueObjects;
 using UsersMS.src.Users.Application.Exceptions;
 using UsersMS.src.Users.Domain;
+using MongoDB.Driver;
 
 namespace UsersMS.src.Users.Application.Commands.CreateUser
 {
@@ -19,35 +20,26 @@ namespace UsersMS.src.Users.Application.Commands.CreateUser
         private readonly IUserRepository _userRepository = userRepository;
         private readonly IDeptoRepository _deptoRepository = deptoRepository;
 
-        public async Task<Result<CreateUserResponse>> Execute(CreateUserCommand command)
+        public async Task<Result<CreateUserResponse>> Execute(CreateUserCommand data)
         {
-            var isUserExist = await _userRepository.ExistByEmail(command.Email);
+            var isUserExist = await _userRepository.ExistByEmail(data.Email);
             if (isUserExist)
             {
-                return Result<CreateUserResponse>.Failure(new UserAlreadyExistException(command.Email));
+                return Result<CreateUserResponse>.Failure(new UserAlreadyExistException(data.Email));
             }
 
             var id = _idGenerator.Generate();
-
-            var userType = (UserType)Enum.Parse(typeof(UserType), command.UserType);
-            if (userType == UserType.Admin)
-            {
-                return Result<CreateUserResponse>.Failure(new InvalidUserTypeAdmin());
-            }
-
-            var status = true;
-            var depto = await _deptoRepository.GetById(command.Department);
-
-            var user = new User(
+            var userType = (UserType)Enum.Parse(typeof(UserType), data.UserType);
+            var isActive = true;
+            var creationDate = DateTime.UtcNow;
+            var user = User.CreateUser(
                 new UserId(id),
-                new UserName(command.Name),
-                new UserEmail(command.Email),
-                new UserPhone(command.Phone),
+                new UserName(data.Name),
+                new UserEmail(data.Email),
+                new UserPhone(data.Phone),
                 userType,
-                status,
-                new DeptoId(command.Department)
+                new DeptoId(data.Department)
             );
-
             await _userRepository.Save(user);
 
             return Result<CreateUserResponse>.Success(new CreateUserResponse(id));

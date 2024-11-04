@@ -5,6 +5,7 @@
         Admin,
         Operator,
         Provider,
-        Driver
+        Driver,
+        Default
     }
 }

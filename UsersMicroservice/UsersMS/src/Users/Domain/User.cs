@@ -6,71 +6,37 @@ using UsersMS.src.Users.Domain.Entities;
 using UsersMS.src.Users.Domain.Events;
 using UsersMS.src.Users.Domain.Exceptions;
 using UsersMS.src.Users.Domain.ValueObjects;
+using static MongoDB.Driver.WriteConcern;
 
 namespace UsersMS.src.Users.Domain
 {
-    public class User : AggregateRoot<UserId>
+    public class User(UserId id) : AggregateRoot<UserId>(id)
     {
-        private new UserId _id;
+        private UserId _id = id;
         private UserName _name;
         private UserEmail _email;
         private UserPhone _phone;
         private UserType _userType;
         private DeptoId _department;
-        private bool _status = true;
+        private bool _isActive = true;
 
-        public User(UserId id, UserName name, UserEmail email, UserPhone phone, UserType userType, bool status, DeptoId department) : base(id)
-        {
-            _id = id;
-            _name = name;
-            _email = email;
-            _phone = phone;
-            _userType = userType;
-            _status = status;
-            _department = department;
-            ValidateState();
-        }
-        
+        public string GetId() => _id.GetValue();
+        public string GetName() => _name.GetValue();
+        public string GetEmail() => _email.GetValue();
+        public string GetPhone() => _phone.GetValue();
+        public string GetUserType() => _userType.GetValue();
+        public bool GetIsActive() => _isActive;
+        public string GetDepartament() => _department.GetValue();
+        public void SetName(string name) => _name = new UserName(name);
+        public void SetEmail(string email) => _email = new UserEmail(email);
+        public void SetPhone(string phone) => _phone = new UserPhone(phone);
+        public void SetUserType(string userType) => _userType = Enum.Parse<UserType>(userType);
+        public bool SetIsActive(bool isActive) => _isActive = isActive;
 
-        public UserId GetId()
+        public static User CreateUser(UserId id, UserName name, UserEmail email, UserPhone phone, UserType userType, DeptoId department)
         {
-            return _id;
-        }
-
-        public UserName GetName()
-        {
-            return _name;
-        }
-
-        public UserEmail GetEmail()
-        {
-            return _email;
-        }
-
-        public UserPhone GetPhone()
-        {
-            return _phone;
-        }
-        
-        public UserType GetUserType()
-        {
-            return _userType;
-        }
-
-        public bool GetStatus()
-        {
-            return _status;
-        }
-
-        public DeptoId GetDepartament()
-        {
-            return _department;
-        }
-
-        public User CreateUser(UserId id, UserName name, UserEmail email, UserPhone phone, UserType userType, bool status, DeptoId department)
-        {
-            var user = new User(id, name, email, phone, userType, status, department);
-            user.Apply(UserCreatedEvent.CreateEvent(id, name, email, phone, userType, status, department));
+            var user = new User(id);
+            user.Apply(UserCreated.CreateEvent(id, name, email, phone, userType, department));
             return user;
         }
 
@@ -81,7 +47,6 @@ namespace UsersMS.src.Users.Domain
             _email = new UserEmail(context.Email);
             _phone = new UserPhone(context.Phone);
             _userType = Enum.Parse<UserType>(context.UserType);
-            _status = context.Status;
             _department = new DeptoId(context.Department);
         }
 
