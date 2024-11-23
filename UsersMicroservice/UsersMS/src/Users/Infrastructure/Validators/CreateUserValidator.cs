@@ -4,9 +4,9 @@ using UsersMS.src.Users.Domain.ValueObjects;
 
 namespace UsersMS.src.Users.Infrastructure.Validators
 {
-    public class CreateUserCommandValidator : AbstractValidator<CreateUserCommand>
+    public class CreateUserValidator : AbstractValidator<CreateUserCommand>
     {
-        public CreateUserCommandValidator()
+        public CreateUserValidator()
         {
             RuleFor(x => x.Name)
                 .NotEmpty().WithMessage("Name is required.")

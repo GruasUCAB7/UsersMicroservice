@@ -16,7 +16,7 @@ using UsersMS.src.Users.Application.Commands.UpdateUser;
 
 namespace UsersMS.src.Users.Infrastructure.Controllers
 {
-    [Route("api/user")]
+    [Route("user")]
     [ApiController]
     public class UserController(
         

@@ -23,9 +23,9 @@ builder.Services.AddLogging();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddControllers();
 builder.Services.AddSingleton<MongoDbService>();
-builder.Services.AddTransient<IValidator<CreateUserCommand>, CreateUserCommandValidator>();
+builder.Services.AddTransient<IValidator<CreateUserCommand>, CreateUserValidator>();
 builder.Services.AddTransient<IValidator<CreateDeptoCommand>, CreateDeptoCommandValidator>();
-builder.Services.AddTransient<IValidator<UpdateUserCommand>, UpdateUserCommandValidator>();
+builder.Services.AddTransient<IValidator<UpdateUserCommand>, UpdateUserValidator>();
 builder.Services.AddScoped<IUserRepository, MongoUserRepository>();
 builder.Services.AddScoped<IDeptoRepository, MongoDeptoRepository>();
 builder.Services.AddTransient<IdGenerator<string>, GuidGenerator>();
@@ -38,6 +38,14 @@ builder.Services.AddSwaggerGen(c =>
         Title = "API UsersMicroservice",
         Description = "Endpoints de UsersMicroservice",
     });
+});
+
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowApiGateway",
+        builder => builder.WithOrigins("https://localhost:4050")
+                          .AllowAnyMethod()
+                          .AllowAnyHeader());
 });
 
 var app = builder.Build();
@@ -64,6 +72,9 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+app.UseStaticFiles();
+app.UseRouting();
+app.UseCors("AllowApiGateway");
 app.UseAuthorization();
 app.MapControllers();
 
