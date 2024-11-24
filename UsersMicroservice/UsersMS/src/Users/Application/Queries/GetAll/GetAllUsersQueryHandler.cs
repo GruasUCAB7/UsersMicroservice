@@ -15,6 +15,7 @@ namespace UsersMS.src.Users.Application.Queries.GetAllUsers
         public async Task<Result<GetUserResponse[]>> Execute(GetAllUsersQuery data)
         {
             var user = await _userRepository.GetAll(data);
+            Console.WriteLine(user);
             if (user == null)
             {
                 return Result<GetUserResponse[]>.Failure(new UserNotFoundException());

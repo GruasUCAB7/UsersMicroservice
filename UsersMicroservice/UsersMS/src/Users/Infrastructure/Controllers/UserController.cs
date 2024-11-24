@@ -80,7 +80,7 @@ namespace UsersMS.src.Users.Infrastructure.Controllers
                 var result = await handler.Execute(query);
 
                 _logger.Log("List of users: {UserIds}", string.Join(", ", result.Unwrap().Select(u => u.Id)));
-                return StatusCode(200, result.Unwrap());
+                return StatusCode(500, result.Unwrap());
             }
             catch (Exception ex)
             {

@@ -19,6 +19,7 @@ namespace UsersMS.src.Users.Domain
         private UserType _userType;
         private DeptoId _department;
         private bool _isActive = true;
+        private DateTime _creationDate = DateTime.UtcNow;
 
         public string GetId() => _id.GetValue();
         public string GetName() => _name.GetValue();
@@ -27,10 +28,7 @@ namespace UsersMS.src.Users.Domain
         public string GetUserType() => _userType.GetValue();
         public bool GetIsActive() => _isActive;
         public string GetDepartament() => _department.GetValue();
-        public void SetName(string name) => _name = new UserName(name);
-        public void SetEmail(string email) => _email = new UserEmail(email);
-        public void SetPhone(string phone) => _phone = new UserPhone(phone);
-        public void SetUserType(string userType) => _userType = Enum.Parse<UserType>(userType);
+        public DateTime GetCreationDate() => _creationDate;
         public bool SetIsActive(bool isActive) => _isActive = isActive;
 
         public static User CreateUser(UserId id, UserName name, UserEmail email, UserPhone phone, UserType userType, DeptoId department)
@@ -48,6 +46,12 @@ namespace UsersMS.src.Users.Domain
             _phone = new UserPhone(context.Phone);
             _userType = Enum.Parse<UserType>(context.UserType);
             _department = new DeptoId(context.Department);
+        }
+
+        public void OnUserUpdateEvent(UserUpdated context)
+        {
+            _id = new UserId(context.Id);
+            _isActive = context.IsActive;
         }
 
         public override void ValidateState()

@@ -30,8 +30,6 @@ namespace UsersMS.src.Users.Application.Commands.CreateUser
 
             var id = _idGenerator.Generate();
             var userType = (UserType)Enum.Parse(typeof(UserType), data.UserType);
-            var isActive = true;
-            var creationDate = DateTime.UtcNow;
             var user = User.CreateUser(
                 new UserId(id),
                 new UserName(data.Name),

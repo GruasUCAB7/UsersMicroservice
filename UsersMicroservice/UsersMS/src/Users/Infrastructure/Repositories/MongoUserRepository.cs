@@ -41,11 +41,11 @@ namespace UsersMS.src.Users.Infrastructure.Repositories
             {
                 var user = User.CreateUser(
                     new UserId(e.GetValue("_id").AsString),
-                    new UserName(e.GetValue("Name").AsString),
-                    new UserEmail(e.GetValue("Email").AsString),
-                    new UserPhone(e.GetValue("Phone").AsString),
-                    Enum.Parse<UserType>(e.GetValue("UserType").AsString),
-                    new DeptoId(e.GetValue("Department").AsString)
+                    new UserName(e.GetValue("name").AsString),
+                    new UserEmail(e.GetValue("email").AsString),
+                    new UserPhone(e.GetValue("phone").AsString),
+                    Enum.Parse<UserType>(e.GetValue("userType").AsString),
+                    new DeptoId(e.GetValue("department").AsString)
                 );
 
                 user.SetIsActive(e.GetValue("isActive").AsBoolean);
@@ -68,11 +68,11 @@ namespace UsersMS.src.Users.Infrastructure.Repositories
 
             var user = User.CreateUser(
                 new UserId(userDocument.GetValue("_id").AsString),
-                new UserName(userDocument.GetValue("Name").AsString),
-                new UserEmail(userDocument.GetValue("Email").AsString),
-                new UserPhone(userDocument.GetValue("Phone").AsString),
-                Enum.Parse<UserType>(userDocument.GetValue("UserType").AsString),
-                new DeptoId(userDocument.GetValue("Department").AsString)
+                new UserName(userDocument.GetValue("name").AsString),
+                new UserEmail(userDocument.GetValue("email").AsString),
+                new UserPhone(userDocument.GetValue("phone").AsString),
+                Enum.Parse<UserType>(userDocument.GetValue("userType").AsString),
+                new DeptoId(userDocument.GetValue("department").AsString)
             );
 
             user.SetIsActive(userDocument.GetValue("isActive").AsBoolean);
@@ -127,7 +127,7 @@ namespace UsersMS.src.Users.Infrastructure.Repositories
             var filter = Builders<BsonDocument>.Filter.Eq("_id", user.GetId());
             var update = Builders<BsonDocument>.Update
                 .Set("isActive", user.GetIsActive())
-                .Set("Phone", user.GetPhone());
+                .Set("phone", user.GetPhone());
 
             var updateResult = await _userCollection.UpdateOneAsync(filter, update);
 

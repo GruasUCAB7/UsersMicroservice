@@ -13,17 +13,17 @@ namespace UsersMS.src.Users.Domain.Events
         public readonly string UserType = userType;
         public readonly string Department = department;
 
-        public static UserCreatedEvent CreateEvent(UserId UserId, UserName UserName, UserEmail UserEmail, UserPhone UserPhone, UserType UserType, DeptoId department)
+        public static UserCreatedEvent CreateEvent(UserId userId, UserName userName, UserEmail userEmail, UserPhone userPhone, UserType userType, DeptoId department)
         {
             return new UserCreatedEvent(
-                UserId.GetValue(),
+                userId.GetValue(),
                 typeof(UserCreated).Name,
                 new UserCreated(
-                    UserId.GetValue(),
-                    UserName.GetValue(),
-                    UserEmail.GetValue(),
-                    UserPhone.GetValue(),
-                    UserType.GetValue(),
+                    userId.GetValue(),
+                    userName.GetValue(),
+                    userEmail.GetValue(),
+                    userPhone.GetValue(),
+                    userType.GetValue(),
                     department.GetValue()
                 )
             );

@@ -25,11 +25,6 @@ namespace UsersMS.src.Users.Application.Commands.UpdateUser
                 user.SetIsActive(request.data.IsActive.Value);
             }
 
-            if (!string.IsNullOrEmpty(request.data.Phone))
-            {
-                user.SetPhone(request.data.Phone);
-            }
-
             var updateResult = await _userRepository.Update(user);
             if (updateResult.IsFailure)
             {

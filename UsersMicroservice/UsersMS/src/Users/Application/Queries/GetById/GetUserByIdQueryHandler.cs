@@ -13,6 +13,7 @@ namespace UsersMS.src.Users.Application.Queries.GetById
         public async Task<Result<GetUserResponse>> Execute(GetUserByIdQuery data)
         {
             var userOptional = await _userRepository.GetById(data.Id);
+            Console.WriteLine(userOptional);
             if (!userOptional.HasValue)
             {
                 return Result<GetUserResponse>.Failure(new UserNotFoundException());
