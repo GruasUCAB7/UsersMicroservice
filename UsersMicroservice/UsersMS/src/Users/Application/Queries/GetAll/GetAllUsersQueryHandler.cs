@@ -1,5 +1,3 @@
-using System.Collections.Generic;
-using System.Threading.Tasks;
 using UsersMS.Core.Utils.Result;
 using UsersMS.src.Users.Application.Repositories;
 using UsersMS.Core.Application.Services;
@@ -27,7 +25,7 @@ namespace UsersMS.src.Users.Application.Queries.GetAllUsers
                 user.GetPhone(),
                 user.GetUserType(),
                 user.GetIsActive(),
-                user.GetDepartament()
+                user.GetDepartment()
                 )
             ).ToArray();
             

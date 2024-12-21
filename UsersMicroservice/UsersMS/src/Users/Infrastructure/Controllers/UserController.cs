@@ -21,14 +21,12 @@ namespace UsersMS.src.Users.Infrastructure.Controllers
     public class UserController(
         
         IUserRepository userRepo,
-        IDeptoRepository deptoRepo,
         IdGenerator<string> idGenerator,
         IValidator<CreateUserCommand> validatorCreate,
         IValidator<UpdateUserCommand> validatorUpdate,
         ILoggerContract logger) : ControllerBase
     {
         private readonly IUserRepository _userRepo = userRepo;
-        private readonly IDeptoRepository _deptoRepo = deptoRepo;
         private readonly IdGenerator<string> _idGenerator = idGenerator;
         private readonly IValidator<CreateUserCommand> _validatorCreate = validatorCreate;
         private readonly IValidator<UpdateUserCommand> _validatorUpdate = validatorUpdate;
@@ -49,7 +47,7 @@ namespace UsersMS.src.Users.Infrastructure.Controllers
                     return StatusCode(400, errors);
                 }
 
-                var handler = new CreateUserCommandHandler(_userRepo, _deptoRepo, _idGenerator);
+                var handler = new CreateUserCommandHandler(_userRepo, _idGenerator);
                 var result = await handler.Execute(command);
 
                 if (result.IsSuccessful)
@@ -122,7 +120,7 @@ namespace UsersMS.src.Users.Infrastructure.Controllers
         {
             try
             {
-                var command = new UpdateUserCommand(data.IsActive, data.Phone);
+                var command = new UpdateUserCommand(data.IsActive, data.Phone, data.Department);
 
                 var validate = _validatorUpdate.Validate(command);
                 if (!validate.IsValid)
