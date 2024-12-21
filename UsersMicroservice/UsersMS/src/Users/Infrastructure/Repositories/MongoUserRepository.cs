@@ -142,7 +142,7 @@ namespace UsersMS.src.Users.Infrastructure.Repositories
             {
                 updateDefinitions.Add(updateDefinitionBuilder.Set("department", user.GetDepartment()));
             }
-
+            
             var update = updateDefinitionBuilder.Combine(updateDefinitions);
 
             var updateResult = await _userCollection.UpdateOneAsync(filter, update);
