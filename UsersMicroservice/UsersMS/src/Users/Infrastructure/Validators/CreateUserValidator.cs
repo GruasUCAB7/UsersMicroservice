@@ -22,8 +22,12 @@ namespace UsersMS.src.Users.Infrastructure.Validators
                 .Matches(@"^\+58 \d{3}-\d{7}$").WithMessage("Phone must be in the format +58 xxx-xxxx.");
 
             RuleFor(x => x.UserType)
-                .NotEmpty().WithMessage("UserType is required.")
-                .IsEnumName(typeof(UserType), caseSensitive: false).WithMessage("UserType is not valid.");
+                .NotEmpty().WithMessage("UserType is required.");
+
+            RuleFor(x => x.Department)
+                .NotEmpty().WithMessage("Department is required.")
+                .MinimumLength(2).WithMessage("The department must not be less than 2 characters.")
+                .MaximumLength(25).WithMessage("Department must not exceed 25 characters.");
         }
     }
 }

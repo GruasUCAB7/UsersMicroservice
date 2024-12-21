@@ -44,8 +44,8 @@ namespace UsersMS.src.Users.Infrastructure.Repositories
                     new UserName(e.GetValue("name").AsString),
                     new UserEmail(e.GetValue("email").AsString),
                     new UserPhone(e.GetValue("phone").AsString),
-                    Enum.Parse<UserType>(e.GetValue("userType").AsString),
-                    new DeptoId(e.GetValue("department").AsString)
+                    new UserType(e.GetValue("userType").AsString),
+                    new DeptoName(e.GetValue("department").AsString)
                 );
 
                 user.SetIsActive(e.GetValue("isActive").AsBoolean);
@@ -71,8 +71,8 @@ namespace UsersMS.src.Users.Infrastructure.Repositories
                 new UserName(userDocument.GetValue("name").AsString),
                 new UserEmail(userDocument.GetValue("email").AsString),
                 new UserPhone(userDocument.GetValue("phone").AsString),
-                Enum.Parse<UserType>(userDocument.GetValue("userType").AsString),
-                new DeptoId(userDocument.GetValue("department").AsString)
+                new UserType(userDocument.GetValue("userType").AsString),
+                new DeptoName(userDocument.GetValue("department").AsString)
             );
 
             user.SetIsActive(userDocument.GetValue("isActive").AsBoolean);
@@ -90,7 +90,7 @@ namespace UsersMS.src.Users.Infrastructure.Repositories
                 Phone = user.GetPhone(),
                 UserType = user.GetUserType(),
                 IsActive = user.GetIsActive(),
-                Department = user.GetDepartament(),
+                Department = user.GetDepartment(),
                 CreatedDate = DateTime.UtcNow,
                 UpdatedDate = DateTime.UtcNow,
             };
@@ -115,8 +115,8 @@ namespace UsersMS.src.Users.Infrastructure.Repositories
                 new UserName(mongoUser.Name),
                 new UserEmail(mongoUser.Email),
                 new UserPhone(mongoUser.Phone),
-                Enum.Parse<UserType>(mongoUser.UserType),
-                new DeptoId(mongoUser.Department)
+                new UserType(mongoUser.UserType),
+                new DeptoName(mongoUser.Department)
             );
             return Result<User>.Success(savedUser);
         }
@@ -136,6 +136,16 @@ namespace UsersMS.src.Users.Infrastructure.Repositories
             if (!string.IsNullOrEmpty(user.GetPhone()))
             {
                 updateDefinitions.Add(updateDefinitionBuilder.Set("phone", user.GetPhone()));
+            }
+
+            if (!string.IsNullOrEmpty(user.GetDepartment()))
+            {
+                updateDefinitions.Add(updateDefinitionBuilder.Set("department", user.GetDepartment()));
+            }
+
+            if (!string.IsNullOrEmpty(user.GetUserType()))
+            {
+                updateDefinitions.Add(updateDefinitionBuilder.Set("userType", user.GetUserType()));
             }
 
             var update = updateDefinitionBuilder.Combine(updateDefinitions);

@@ -2,10 +2,7 @@
 
 namespace UsersMS.src.Users.Domain.Exceptions
 {
-    public class InvalidUserTypeException : DomainException
+    public class InvalidUserTypeException(string message) : DomainException(message)
     {
-        public InvalidUserTypeException() : base("Invalid user type")
-        {
-        }
     }
 }

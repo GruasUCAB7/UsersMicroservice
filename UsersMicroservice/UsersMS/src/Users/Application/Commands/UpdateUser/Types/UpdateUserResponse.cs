@@ -5,9 +5,9 @@ namespace UsersMS.src.Users.Application.Commands.UpdateUser.Types
         string Id,
         string Name,
         string Email,
-        string phone,
-        string userType,
-        string department,
+        string Phone,
+        string UserType,
+        string Department,
         bool IsActive
     );
 }

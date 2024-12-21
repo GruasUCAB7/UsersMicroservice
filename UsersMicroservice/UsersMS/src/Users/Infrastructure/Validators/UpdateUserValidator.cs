@@ -1,6 +1,5 @@
 using FluentValidation;
 using UsersMS.src.Users.Application.Commands.UpdateUser.Types;
-using UsersMS.src.Users.Domain.ValueObjects;
 
 namespace UsersMS.src.Users.Infrastructure.Validators
 {
@@ -13,9 +12,17 @@ namespace UsersMS.src.Users.Infrastructure.Validators
                 .When(x => x.IsActive.HasValue);
 
             RuleFor(x => x.Phone)
-                .NotEmpty().WithMessage("Phone is required.")
+                .NotNull().WithMessage("Phone is required.")
                 .Matches(@"^\+\d{2,3} \d{3}-\d{7}$").WithMessage("Phone format is invalid.")
                 .When(x => !string.IsNullOrEmpty(x.Phone));
+
+            RuleFor(x => x.Department)
+                .NotNull().WithMessage("Department is required.")
+                .When(x => !string.IsNullOrEmpty(x.Department));
+
+            RuleFor(x => x.UserType)
+                .NotNull().WithMessage("UserType is required.")
+                .When(x => !string.IsNullOrEmpty(x.UserType));
         }
     }
 }
