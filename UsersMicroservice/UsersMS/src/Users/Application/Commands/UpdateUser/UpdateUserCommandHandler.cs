@@ -30,6 +30,11 @@ namespace UsersMS.src.Users.Application.Commands.UpdateUser
                 user.SetPhone(request.data.Phone);
             }
 
+            if (!string.IsNullOrEmpty(request.data.Department))
+            {
+                user.SetDepartment(request.data.Department);
+            }
+
             var updateResult = await _userRepository.Update(user);
             if (updateResult.IsFailure)
             {
@@ -42,7 +47,7 @@ namespace UsersMS.src.Users.Application.Commands.UpdateUser
                 user.GetEmail(),
                 user.GetPhone(),
                 user.GetUserType(),
-                user.GetDepartament(),
+                user.GetDepartment(),
                 user.GetIsActive()
             );
 

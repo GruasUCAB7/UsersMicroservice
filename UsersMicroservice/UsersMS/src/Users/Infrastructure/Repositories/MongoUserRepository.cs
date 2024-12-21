@@ -45,7 +45,7 @@ namespace UsersMS.src.Users.Infrastructure.Repositories
                     new UserEmail(e.GetValue("email").AsString),
                     new UserPhone(e.GetValue("phone").AsString),
                     Enum.Parse<UserType>(e.GetValue("userType").AsString),
-                    new DeptoId(e.GetValue("department").AsString)
+                    new DeptoName(e.GetValue("department").AsString)
                 );
 
                 user.SetIsActive(e.GetValue("isActive").AsBoolean);
@@ -72,7 +72,7 @@ namespace UsersMS.src.Users.Infrastructure.Repositories
                 new UserEmail(userDocument.GetValue("email").AsString),
                 new UserPhone(userDocument.GetValue("phone").AsString),
                 Enum.Parse<UserType>(userDocument.GetValue("userType").AsString),
-                new DeptoId(userDocument.GetValue("department").AsString)
+                new DeptoName(userDocument.GetValue("department").AsString)
             );
 
             user.SetIsActive(userDocument.GetValue("isActive").AsBoolean);
@@ -90,7 +90,7 @@ namespace UsersMS.src.Users.Infrastructure.Repositories
                 Phone = user.GetPhone(),
                 UserType = user.GetUserType(),
                 IsActive = user.GetIsActive(),
-                Department = user.GetDepartament(),
+                Department = user.GetDepartment(),
                 CreatedDate = DateTime.UtcNow,
                 UpdatedDate = DateTime.UtcNow,
             };
@@ -116,7 +116,7 @@ namespace UsersMS.src.Users.Infrastructure.Repositories
                 new UserEmail(mongoUser.Email),
                 new UserPhone(mongoUser.Phone),
                 Enum.Parse<UserType>(mongoUser.UserType),
-                new DeptoId(mongoUser.Department)
+                new DeptoName(mongoUser.Department)
             );
             return Result<User>.Success(savedUser);
         }
@@ -138,6 +138,11 @@ namespace UsersMS.src.Users.Infrastructure.Repositories
                 updateDefinitions.Add(updateDefinitionBuilder.Set("phone", user.GetPhone()));
             }
 
+            if (!string.IsNullOrEmpty(user.GetDepartment()))
+            {
+                updateDefinitions.Add(updateDefinitionBuilder.Set("department", user.GetDepartment()));
+            }
+            
             var update = updateDefinitionBuilder.Combine(updateDefinitions);
 
             var updateResult = await _userCollection.UpdateOneAsync(filter, update);

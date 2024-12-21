@@ -24,6 +24,11 @@ namespace UsersMS.src.Users.Infrastructure.Validators
             RuleFor(x => x.UserType)
                 .NotEmpty().WithMessage("UserType is required.")
                 .IsEnumName(typeof(UserType), caseSensitive: false).WithMessage("UserType is not valid.");
+            
+            RuleFor(x => x.Department)
+                .NotEmpty().WithMessage("Department is required.")
+                .MinimumLength(2).WithMessage("The department must not be less than 2 characters.")
+                .MaximumLength(25).WithMessage("Department must not exceed 25 characters.");
         }
     }
 }

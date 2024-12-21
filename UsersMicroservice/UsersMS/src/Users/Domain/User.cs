@@ -1,12 +1,7 @@
-﻿using System.Numerics;
-using System.Xml.Linq;
-using UsersMS.Core.Domain.Aggregates;
-using UsersMS.Core.Utils.RegExps;
-using UsersMS.src.Users.Domain.Entities;
+﻿using UsersMS.Core.Domain.Aggregates;
 using UsersMS.src.Users.Domain.Events;
 using UsersMS.src.Users.Domain.Exceptions;
 using UsersMS.src.Users.Domain.ValueObjects;
-using static MongoDB.Driver.WriteConcern;
 
 namespace UsersMS.src.Users.Domain
 {
@@ -17,7 +12,7 @@ namespace UsersMS.src.Users.Domain
         private UserEmail _email;
         private UserPhone _phone;
         private UserType _userType;
-        private DeptoId _department;
+        private DeptoName _department;
         private bool _isActive = true;
 
         public string GetId() => _id.GetValue();
@@ -26,14 +21,13 @@ namespace UsersMS.src.Users.Domain
         public string GetPhone() => _phone.GetValue();
         public string GetUserType() => _userType.GetValue();
         public bool GetIsActive() => _isActive;
-        public string GetDepartament() => _department.GetValue();
-        public void SetName(string name) => _name = new UserName(name);
-        public void SetEmail(string email) => _email = new UserEmail(email);
+        public string GetDepartment() => _department.GetValue();
         public void SetPhone(string phone) => _phone = new UserPhone(phone);
         public void SetUserType(string userType) => _userType = Enum.Parse<UserType>(userType);
         public bool SetIsActive(bool isActive) => _isActive = isActive;
+        public void SetDepartment(string depto) => _department = new DeptoName(depto);
 
-        public static User CreateUser(UserId id, UserName name, UserEmail email, UserPhone phone, UserType userType, DeptoId department)
+        public static User CreateUser(UserId id, UserName name, UserEmail email, UserPhone phone, UserType userType, DeptoName department)
         {
             var user = new User(id);
             user.Apply(UserCreated.CreateEvent(id, name, email, phone, userType, department));
@@ -47,7 +41,7 @@ namespace UsersMS.src.Users.Domain
             _email = new UserEmail(context.Email);
             _phone = new UserPhone(context.Phone);
             _userType = Enum.Parse<UserType>(context.UserType);
-            _department = new DeptoId(context.Department);
+            _department = new DeptoName(context.Department);
         }
 
         public override void ValidateState()

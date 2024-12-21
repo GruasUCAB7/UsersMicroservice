@@ -27,7 +27,7 @@ namespace UsersMS.src.Users.Application.Queries.GetById
                 user.GetPhone(),
                 user.GetUserType(),
                 user.GetIsActive(),
-                user.GetDepartament()
+                user.GetDepartment()
             );
 
             return Result<GetUserResponse>.Success(response);
