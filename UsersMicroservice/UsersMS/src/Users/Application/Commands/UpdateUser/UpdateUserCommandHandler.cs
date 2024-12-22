@@ -13,6 +13,7 @@ namespace UsersMS.src.Users.Application.Commands.UpdateUser
         public async Task<Result<UpdateUserResponse>> Execute((string id, UpdateUserCommand data) request)
         {
             var userOptional = await _userRepository.GetById(request.id);
+
             if (!userOptional.HasValue)
             {
                 return Result<UpdateUserResponse>.Failure(new UserNotFoundException());

@@ -20,6 +20,7 @@ namespace UsersMS.src.Users.Application.Commands.CreateUser
         public async Task<Result<CreateUserResponse>> Execute(CreateUserCommand data)
         {
             var isUserExist = await _userRepository.ExistByEmail(data.Email);
+
             if (isUserExist)
             {
                 return Result<CreateUserResponse>.Failure(new UserAlreadyExistException(data.Email));

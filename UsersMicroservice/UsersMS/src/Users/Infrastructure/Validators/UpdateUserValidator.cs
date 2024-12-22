@@ -7,6 +7,7 @@ namespace UsersMS.src.Users.Infrastructure.Validators
     {
         public UpdateUserValidator()
         {
+
             RuleFor(x => x.IsActive)
                 .NotNull().WithMessage("IsActive must be true or false.")
                 .When(x => x.IsActive.HasValue);

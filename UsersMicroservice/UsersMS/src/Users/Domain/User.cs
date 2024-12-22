@@ -27,6 +27,7 @@ namespace UsersMS.src.Users.Domain
         public void SetDepartment(string depto) => _department = new DeptoName(depto);
         public void SetUserType(string type) => _userType = new UserType(type);
 
+
         public static User CreateUser(UserId id, UserName name, UserEmail email, UserPhone phone, UserType userType, DeptoName department)
         {
             var user = new User(id);

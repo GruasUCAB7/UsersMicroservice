@@ -8,6 +8,7 @@ namespace UsersMS.src.Users.Infrastructure.Validators
     {
         public CreateUserValidator()
         {
+
             RuleFor(x => x.Name)
                 .NotEmpty().WithMessage("Name is required.")
                 .MinimumLength(3).WithMessage("The name must not be less than 3 characters.")

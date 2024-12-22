@@ -123,7 +123,6 @@ namespace UsersMS.src.Users.Infrastructure.Repositories
 
         public async Task<Result<User>> Update(User user)
         {
-
             var filter = Builders<BsonDocument>.Filter.Eq("_id", user.GetId());
             var updateDefinitionBuilder = Builders<BsonDocument>.Update;
             var updateDefinitions = new List<UpdateDefinition<BsonDocument>>();

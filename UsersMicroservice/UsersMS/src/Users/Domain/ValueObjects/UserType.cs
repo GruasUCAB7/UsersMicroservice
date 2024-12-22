@@ -3,7 +3,7 @@ using UsersMS.src.Users.Domain.Exceptions;
 
 namespace UsersMS.src.Users.Domain.ValueObjects
 {
-    public class UserType : IValueObject<UserType>
+    public class UserType: IValueObject<UserType>
     {
         public static readonly string Operator = "Operator";
         public static readonly string Provider = "Provider";
