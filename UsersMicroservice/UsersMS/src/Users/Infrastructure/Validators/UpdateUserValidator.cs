@@ -17,9 +17,12 @@ namespace UsersMS.src.Users.Infrastructure.Validators
                 .When(x => !string.IsNullOrEmpty(x.Phone));
 
             RuleFor(x => x.Department)
-                .NotEmpty().WithMessage("Department is required.")
-                .MinimumLength(2).WithMessage("The department must not be less than 2 characters.")
-                .MaximumLength(25).WithMessage("Department must not exceed 25 characters.");
+                .NotNull().WithMessage("Department is required.")
+                .When(x => !string.IsNullOrEmpty(x.Department));
+
+            RuleFor(x => x.UserType)
+                .NotNull().WithMessage("UserType is required.")
+                .When(x => !string.IsNullOrEmpty(x.UserType));
         }
     }
 }

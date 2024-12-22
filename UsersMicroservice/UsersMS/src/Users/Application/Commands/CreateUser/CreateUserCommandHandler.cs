@@ -26,13 +26,12 @@ namespace UsersMS.src.Users.Application.Commands.CreateUser
             }
 
             var id = _idGenerator.Generate();
-            var userType = (UserType)Enum.Parse(typeof(UserType), data.UserType);
             var user = User.CreateUser(
                 new UserId(id),
                 new UserName(data.Name),
                 new UserEmail(data.Email),
                 new UserPhone(data.Phone),
-                userType,
+                new UserType(data.UserType),
                 new DeptoName(data.Department)
             );
             await _userRepository.Save(user);

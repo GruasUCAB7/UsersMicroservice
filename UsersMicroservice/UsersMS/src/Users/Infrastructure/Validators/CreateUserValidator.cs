@@ -1,6 +1,5 @@
 ﻿using FluentValidation;
 using UsersMS.src.Users.Application.Commands.CreateUser.Types;
-using UsersMS.src.Users.Domain.ValueObjects;
 
 namespace UsersMS.src.Users.Infrastructure.Validators
 {
@@ -22,8 +21,7 @@ namespace UsersMS.src.Users.Infrastructure.Validators
                 .Matches(@"^\+58 \d{3}-\d{7}$").WithMessage("Phone must be in the format +58 xxx-xxxx.");
 
             RuleFor(x => x.UserType)
-                .NotEmpty().WithMessage("UserType is required.")
-                .IsEnumName(typeof(UserType), caseSensitive: false).WithMessage("UserType is not valid.");
+                .NotEmpty().WithMessage("UserType is required.");
             
             RuleFor(x => x.Department)
                 .NotEmpty().WithMessage("Department is required.")
