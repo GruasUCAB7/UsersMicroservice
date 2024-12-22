@@ -120,7 +120,7 @@ namespace UsersMS.src.Users.Infrastructure.Controllers
         {
             try
             {
-                var command = new UpdateUserCommand(data.IsActive, data.Phone, data.Department);
+                var command = new UpdateUserCommand(data.IsActive, data.Phone, data.Department, data.UserType);
 
                 var validate = _validatorUpdate.Validate(command);
                 if (!validate.IsValid)

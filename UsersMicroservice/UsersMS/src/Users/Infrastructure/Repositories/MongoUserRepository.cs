@@ -16,7 +16,7 @@ namespace UsersMS.src.Users.Infrastructure.Repositories
 
         public async Task<bool> ExistByEmail(string email)
         {
-            var filter = Builders<BsonDocument>.Filter.Eq("Email", email);
+            var filter = Builders<BsonDocument>.Filter.Eq("email", email);
             var result = await _userCollection.Find(filter).FirstOrDefaultAsync();
             return result != null;
         }
@@ -26,8 +26,8 @@ namespace UsersMS.src.Users.Infrastructure.Repositories
             var filterBuilder = Builders<BsonDocument>.Filter;
             var filter = data.IsActive?.ToLower() switch
             {
-                "active" => filterBuilder.Eq("isActive", true),
-                "inactive" => filterBuilder.Eq("isActive", false),
+                "activo" => filterBuilder.Eq("isActive", true),
+                "inactivo" => filterBuilder.Eq("isActive", false),
                 _ => filterBuilder.Empty
             };
 
@@ -44,7 +44,7 @@ namespace UsersMS.src.Users.Infrastructure.Repositories
                     new UserName(e.GetValue("name").AsString),
                     new UserEmail(e.GetValue("email").AsString),
                     new UserPhone(e.GetValue("phone").AsString),
-                    Enum.Parse<UserType>(e.GetValue("userType").AsString),
+                    new UserType(e.GetValue("userType").AsString),
                     new DeptoName(e.GetValue("department").AsString)
                 );
 
@@ -71,7 +71,7 @@ namespace UsersMS.src.Users.Infrastructure.Repositories
                 new UserName(userDocument.GetValue("name").AsString),
                 new UserEmail(userDocument.GetValue("email").AsString),
                 new UserPhone(userDocument.GetValue("phone").AsString),
-                Enum.Parse<UserType>(userDocument.GetValue("userType").AsString),
+                new UserType(userDocument.GetValue("userType").AsString),
                 new DeptoName(userDocument.GetValue("department").AsString)
             );
 
@@ -115,7 +115,7 @@ namespace UsersMS.src.Users.Infrastructure.Repositories
                 new UserName(mongoUser.Name),
                 new UserEmail(mongoUser.Email),
                 new UserPhone(mongoUser.Phone),
-                Enum.Parse<UserType>(mongoUser.UserType),
+                new UserType(mongoUser.UserType),
                 new DeptoName(mongoUser.Department)
             );
             return Result<User>.Success(savedUser);
@@ -142,7 +142,12 @@ namespace UsersMS.src.Users.Infrastructure.Repositories
             {
                 updateDefinitions.Add(updateDefinitionBuilder.Set("department", user.GetDepartment()));
             }
-            
+
+            if (!string.IsNullOrEmpty(user.GetUserType()))
+            {
+                updateDefinitions.Add(updateDefinitionBuilder.Set("userType", user.GetUserType()));
+            }
+
             var update = updateDefinitionBuilder.Combine(updateDefinitions);
 
             var updateResult = await _userCollection.UpdateOneAsync(filter, update);

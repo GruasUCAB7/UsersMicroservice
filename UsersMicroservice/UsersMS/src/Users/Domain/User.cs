@@ -23,7 +23,7 @@ namespace UsersMS.src.Users.Domain
         public bool GetIsActive() => _isActive;
         public string GetDepartment() => _department.GetValue();
         public void SetPhone(string phone) => _phone = new UserPhone(phone);
-        public void SetUserType(string userType) => _userType = Enum.Parse<UserType>(userType);
+        public void SetUserType(string userType) => _userType = new UserType(userType);
         public bool SetIsActive(bool isActive) => _isActive = isActive;
         public void SetDepartment(string depto) => _department = new DeptoName(depto);
 
@@ -40,13 +40,13 @@ namespace UsersMS.src.Users.Domain
             _name = new UserName(context.Name);
             _email = new UserEmail(context.Email);
             _phone = new UserPhone(context.Phone);
-            _userType = Enum.Parse<UserType>(context.UserType);
+            _userType = new UserType(context.UserType);
             _department = new DeptoName(context.Department);
         }
 
         public override void ValidateState()
         {
-            if (_id == null || _name == null || _email == null || _phone == null || _department == null )
+            if (_id == null || _name == null || _email == null || _phone == null || _userType == null || _department == null )
             {
                 throw new InvalidUserException();
             }

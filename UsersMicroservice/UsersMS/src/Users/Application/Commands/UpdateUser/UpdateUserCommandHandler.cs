@@ -35,6 +35,11 @@ namespace UsersMS.src.Users.Application.Commands.UpdateUser
                 user.SetDepartment(request.data.Department);
             }
 
+            if (!string.IsNullOrEmpty(request.data.UserType))
+            {
+                user.SetUserType(request.data.UserType);
+            }
+
             var updateResult = await _userRepository.Update(user);
             if (updateResult.IsFailure)
             {

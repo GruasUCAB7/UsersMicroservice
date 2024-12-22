@@ -4,6 +4,7 @@ namespace UsersMS.src.Users.Application.Commands.UpdateUser.Types
     (
         bool? IsActive,
         string? Phone,
-        string? Department
+        string? Department,
+        string? UserType
     );
 }
