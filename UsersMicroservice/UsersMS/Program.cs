@@ -13,6 +13,9 @@ using UsersMS.src.Users.Application.Repositories;
 using UsersMS.src.Users.Infrastructure.Repositories;
 using UsersMS.Core.Infrastructure.UUID;
 using UsersMS.src.Users.Infrastructure.Validators;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -28,6 +31,7 @@ builder.Services.AddScoped<IUserRepository, MongoUserRepository>();
 builder.Services.AddTransient<IdGenerator<string>, GuidGenerator>();
 builder.Services.AddTransient<ICrypto, BcryptCryptoService>();
 builder.Services.AddScoped<ILoggerContract, LoggerAspect>();
+
 builder.Services.AddSwaggerGen(c =>
 {
     c.SwaggerDoc("v1", new OpenApiInfo
@@ -35,6 +39,35 @@ builder.Services.AddSwaggerGen(c =>
         Title = "API UsersMicroservice",
         Description = "Endpoints de UsersMicroservice",
     });
+
+    // Configuración de seguridad para JWT
+    c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+    {
+        Name = "Authorization",
+        Type = SecuritySchemeType.Http,
+        Scheme = "Bearer",
+        BearerFormat = "JWT",
+        In = ParameterLocation.Header,
+        Description = "Ingrese el token JWT en el formato: Bearer {token}"
+    });
+
+    c.AddSecurityRequirement(new OpenApiSecurityRequirement
+    {
+        {
+            new OpenApiSecurityScheme
+            {
+                Reference = new OpenApiReference
+                {
+                    Type = ReferenceType.SecurityScheme,
+                    Id = "Bearer"
+                }
+            },
+            new string[] {}
+        }
+    });
+
+
+
 });
 
 builder.Services.AddCors(options =>
@@ -44,6 +77,29 @@ builder.Services.AddCors(options =>
                           .AllowAnyMethod()
                           .AllowAnyHeader());
 });
+
+builder.Services.AddAuthentication(options =>
+{
+    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+})
+.AddJwtBearer(options =>
+{
+    options.TokenValidationParameters = new TokenValidationParameters
+    {
+        ValidateIssuer = true,
+        ValidateAudience = true,
+        ValidateLifetime = true,
+        ValidateIssuerSigningKey = true,
+        ValidIssuer = Environment.GetEnvironmentVariable("JWT_ISSUER"),
+        ValidAudience = Environment.GetEnvironmentVariable("JWT_AUDIENCE"),
+        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Environment.GetEnvironmentVariable("JWT_KEY")))
+    };
+
+});
+
+builder.Services.AddScoped<JwtService>();
+builder.Services.AddTransient<EmailService>();
 
 var app = builder.Build();
 
@@ -68,6 +124,8 @@ if (app.Environment.IsDevelopment())
     });
 }
 
+app.UseAuthentication();
+app.UseAuthorization();
 app.UseHttpsRedirection();
 app.UseStaticFiles();
 app.UseRouting();

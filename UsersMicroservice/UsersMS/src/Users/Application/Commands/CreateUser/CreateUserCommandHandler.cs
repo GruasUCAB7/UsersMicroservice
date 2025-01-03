@@ -10,8 +10,8 @@ using UsersMS.src.Users.Domain;
 namespace UsersMS.src.Users.Application.Commands.CreateUser
 {
     public class CreateUserCommandHandler(
-        IUserRepository userRepository, 
-        IdGenerator<string> idGenerator
+    IUserRepository userRepository,
+    IdGenerator<string> idGenerator
     ) : IService<CreateUserCommand, CreateUserResponse>
     {
         private readonly IdGenerator<string> _idGenerator = idGenerator;
@@ -26,6 +26,7 @@ namespace UsersMS.src.Users.Application.Commands.CreateUser
             }
 
             var id = _idGenerator.Generate();
+
             var user = User.CreateUser(
                 new UserId(id),
                 new UserName(data.Name),
@@ -34,9 +35,16 @@ namespace UsersMS.src.Users.Application.Commands.CreateUser
                 new UserType(data.UserType),
                 new DeptoName(data.Department)
             );
+
+            user.SetPasswordHash(data.PasswordHash);
+            user.SetTemporaryPassword(data.IsTemporaryPassword);
+            user.SetPasswordExpirationDate(data.PasswordExpirationDate);
+
             await _userRepository.Save(user);
 
             return Result<CreateUserResponse>.Success(new CreateUserResponse(id));
         }
+
     }
+
 }

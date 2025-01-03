@@ -13,6 +13,7 @@ using UsersMS.src.Users.Application.Queries.GetAllUsers;
 using UsersMS.src.Users.Application.Queries.GetById;
 using UsersMS.src.Users.Application.Queries.GetById.Types;
 using UsersMS.src.Users.Application.Commands.UpdateUser;
+using Microsoft.AspNetCore.Authorization;
 
 namespace UsersMS.src.Users.Infrastructure.Controllers
 {
@@ -32,18 +33,34 @@ namespace UsersMS.src.Users.Infrastructure.Controllers
         private readonly IValidator<UpdateUserCommand> _validatorUpdate = validatorUpdate;
         private readonly ILoggerContract _logger = logger;
 
+
         [HttpPost]
-        public async Task<IActionResult> CreateUser([FromBody] CreateUserCommand data)
+        [Authorize(Roles = "Admin,Operator")]
+        public async Task<IActionResult> CreateUser(
+        [FromBody] CreateUserClientCommand clientData,
+        [FromServices] EmailService emailService)
         {
             try
             {
-                var command = new CreateUserCommand(data.Name, data.Email, data.Phone, data.UserType, data.Department);
+                string temporaryPassword = Guid.NewGuid().ToString("n").Substring(0, 8);
+                string hashedPassword = BCrypt.Net.BCrypt.HashPassword(temporaryPassword);
+                DateTime passwordExpirationDate = DateTime.UtcNow.AddHours(24);
+
+                var command = new CreateUserCommand(
+                    clientData.Name,
+                    clientData.Email,
+                    clientData.Phone,
+                    clientData.UserType,
+                    clientData.Department,
+                    hashedPassword,
+                    true,
+                    passwordExpirationDate
+                );
 
                 var validate = _validatorCreate.Validate(command);
                 if (!validate.IsValid)
                 {
                     var errors = validate.Errors.Select(e => e.ErrorMessage).ToList();
-                    _logger.Error($"Validation failed for CreateUserCommand: {string.Join(", ", errors)}");
                     return StatusCode(400, errors);
                 }
 
@@ -52,23 +69,33 @@ namespace UsersMS.src.Users.Infrastructure.Controllers
 
                 if (result.IsSuccessful)
                 {
-                    _logger.Log("User created successfully: {UserId}", result.Unwrap().Id);
-                    return StatusCode(201, new { id = result.Unwrap().Id });
+                    string subject = "Bienvenido a Gruas UCAB";
+                    string body = $@"
+                    <h1>¡Hola {clientData.Name}!</h1>
+                    <p>Gracias por registrarte en Gruas UCAB.</p>
+                    <p>Tu contraseña temporal es: <b>{temporaryPassword}</b></p>
+                    <p>Por favor, inicia sesión con esta contraseña y cámbiala antes de 24 horas.</p>
+                    <p>Saludos,<br>El equipo de Gruas UCAB</p>";
+
+                    await emailService.SendEmail(clientData.Email, subject, body);
+
+                    return StatusCode(201, new { id = result.Unwrap().Id, temporaryPassword });
                 }
                 else
                 {
-                    _logger.Error("Failed to create user: {ErrorMessage}", result.ErrorMessage);
                     return StatusCode(409, result.ErrorMessage);
                 }
             }
             catch (Exception ex)
             {
-                _logger.Exception("An error occurred while creating the user.", ex.Message);
                 return StatusCode(500, ex.Message);
             }
         }
 
+
+
         [HttpGet]
+        [Authorize(Roles = "Admin,Operator")]
         public async Task<IActionResult> GetAllUsers([FromQuery] GetAllUsersQuery data)
         {
             try
@@ -88,6 +115,7 @@ namespace UsersMS.src.Users.Infrastructure.Controllers
         }
 
         [HttpGet("{id}")]
+        [Authorize(Roles = "Admin,Operator")]
         public async Task<IActionResult> GetUserById(string id)
         {
             try
@@ -116,11 +144,12 @@ namespace UsersMS.src.Users.Infrastructure.Controllers
         }
 
         [HttpPatch("{id}")]
+        [Authorize(Roles = "Admin,Operator")]
         public async Task<IActionResult> UpdateUser([FromBody] UpdateUserCommand data, string id)
         {
             try
             {
-                var command = new UpdateUserCommand(data.IsActive, data.Phone, data.Department, data.UserType);
+                var command = new UpdateUserCommand(data.IsActive, data.Phone, data.Department, data.UserType, data.IsTemporaryPassword, data.PasswordExpirationDate);
 
                 var validate = _validatorUpdate.Validate(command);
                 if (!validate.IsValid)

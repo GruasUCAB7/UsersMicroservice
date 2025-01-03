@@ -16,16 +16,26 @@ namespace UsersMS.src.Users.Infrastructure.Models
         public required string Email { get; set; }
 
         [BsonElement("phone")]
-        public required string Phone { get; set; }
+        public string Phone { get; set; }
+
+        [BsonElement("department")]
+        public string Department { get; set; }
+
+        [BsonElement("passwordHash")]
+        public required string PasswordHash { get; set; }
 
         [BsonElement("userType")]
         public required string UserType { get; set; }
 
+        [BsonElement("isTemporaryPassword")]
+        public bool IsTemporaryPassword { get; set; }
+
+        [BsonElement("passwordExpirationDate")]
+        public DateTime? PasswordExpirationDate { get; set; }
+
+
         [BsonElement("isActive")]
         public required bool IsActive { get; set; }
-
-        [BsonElement("department")]
-        public required string Department { get; set; }
 
         [BsonElement("createdDate")]
         public required DateTime CreatedDate { get; set; }
@@ -34,4 +44,3 @@ namespace UsersMS.src.Users.Infrastructure.Models
         public required DateTime UpdatedDate { get; set; }
     }
 }
-

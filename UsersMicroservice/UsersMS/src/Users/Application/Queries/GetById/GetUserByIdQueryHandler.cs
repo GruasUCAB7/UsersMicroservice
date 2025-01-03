@@ -27,7 +27,9 @@ namespace UsersMS.src.Users.Application.Queries.GetById
                 user.GetPhone(),
                 user.GetUserType(),
                 user.GetIsActive(),
-                user.GetDepartment()
+                user.GetDepartment(),
+                user.GetTemporaryPassword(),
+                user.GetPasswordExpirationDate()
             );
 
             return Result<GetUserResponse>.Success(response);

@@ -14,6 +14,9 @@ namespace UsersMS.src.Users.Domain
         private UserType _userType;
         private DeptoName _department;
         private bool _isActive = true;
+        private string _passwordHash;
+        private bool _isTemporaryPassword = false;
+        private DateTime? _passwordExpirationDate;
 
         public string GetId() => _id.GetValue();
         public string GetName() => _name.GetValue();
@@ -22,9 +25,16 @@ namespace UsersMS.src.Users.Domain
         public string GetUserType() => _userType.GetValue();
         public bool GetIsActive() => _isActive;
         public string GetDepartment() => _department.GetValue();
+        public string GetPasswordHash() => _passwordHash;
+        public bool GetTemporaryPassword() => _isTemporaryPassword;
+        public DateTime? GetPasswordExpirationDate() => _passwordExpirationDate;
+
+        public void SetTemporaryPassword(bool isTemporary) => _isTemporaryPassword = isTemporary;
+        public void SetPasswordHash(string passwordHash) => _passwordHash = passwordHash;
+        public void SetPasswordExpirationDate(DateTime? expirationDate) => _passwordExpirationDate = expirationDate;
         public void SetPhone(string phone) => _phone = new UserPhone(phone);
         public void SetUserType(string userType) => _userType = new UserType(userType);
-        public bool SetIsActive(bool isActive) => _isActive = isActive;
+        public void SetIsActive(bool isActive) => _isActive = isActive;
         public void SetDepartment(string depto) => _department = new DeptoName(depto);
 
         public static User CreateUser(UserId id, UserName name, UserEmail email, UserPhone phone, UserType userType, DeptoName department)
@@ -46,7 +56,7 @@ namespace UsersMS.src.Users.Domain
 
         public override void ValidateState()
         {
-            if (_id == null || _name == null || _email == null || _phone == null || _userType == null || _department == null )
+            if (_id == null || _name == null || _email == null || _phone == null || _userType == null || _department == null)
             {
                 throw new InvalidUserException();
             }

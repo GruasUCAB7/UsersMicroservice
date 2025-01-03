@@ -25,7 +25,9 @@ namespace UsersMS.src.Users.Application.Queries.GetAllUsers
                 user.GetPhone(),
                 user.GetUserType(),
                 user.GetIsActive(),
-                user.GetDepartment()
+                user.GetDepartment(),
+                user.GetTemporaryPassword(),
+                user.GetPasswordExpirationDate()
                 )
             ).ToArray();
             
