@@ -40,6 +40,16 @@ namespace UsersMS.src.Users.Application.Commands.UpdateUser
                 user.SetUserType(request.data.UserType);
             }
 
+            if (request.data.IsTemporaryPassword.HasValue)
+            {
+                user.SetTemporaryPassword(request.data.IsTemporaryPassword.Value);
+            }
+
+            if (request.data.PasswordExpirationDate.HasValue)
+            {
+                user.SetPasswordExpirationDate(request.data.PasswordExpirationDate);
+            }
+
             var updateResult = await _userRepository.Update(user);
             if (updateResult.IsFailure)
             {
@@ -53,7 +63,9 @@ namespace UsersMS.src.Users.Application.Commands.UpdateUser
                 user.GetPhone(),
                 user.GetUserType(),
                 user.GetDepartment(),
-                user.GetIsActive()
+                user.GetIsActive(),
+                user.GetTemporaryPassword(),
+                user.GetPasswordExpirationDate()
             );
 
             return Result<UpdateUserResponse>.Success(response);

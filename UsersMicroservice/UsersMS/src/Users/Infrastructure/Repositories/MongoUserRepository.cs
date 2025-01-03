@@ -49,12 +49,23 @@ namespace UsersMS.src.Users.Infrastructure.Repositories
                 );
 
                 user.SetIsActive(e.GetValue("isActive").AsBoolean);
-                return user;
 
+                if (e.TryGetValue("isTemporaryPassword", out var isTemporaryPassword))
+                {
+                    user.SetTemporaryPassword(isTemporaryPassword.AsBoolean);
+                }
+
+                if (e.TryGetValue("passwordExpirationDate", out var passwordExpirationDate))
+                {
+                    user.SetPasswordExpirationDate(passwordExpirationDate.ToUniversalTime());
+                }
+
+                return user;
             }).ToList();
 
             return users;
         }
+
 
         public async Task<Core.Utils.Optional.Optional<User>> GetById(string id)
         {
@@ -77,8 +88,60 @@ namespace UsersMS.src.Users.Infrastructure.Repositories
 
             user.SetIsActive(userDocument.GetValue("isActive").AsBoolean);
 
+            if (userDocument.TryGetValue("isTemporaryPassword", out var isTemporaryPassword))
+            {
+                user.SetTemporaryPassword(isTemporaryPassword.AsBoolean);
+            }
+
+            if (userDocument.TryGetValue("passwordExpirationDate", out var passwordExpirationDate))
+            {
+                user.SetPasswordExpirationDate(passwordExpirationDate.ToUniversalTime());
+            }
+
             return Core.Utils.Optional.Optional<User>.Of(user);
         }
+
+
+        public async Task<Core.Utils.Optional.Optional<User>> GetByEmail(string email)
+        {
+            var filter = Builders<BsonDocument>.Filter.Eq("email", email);
+            var userDocument = await _userCollection.Find(filter).FirstOrDefaultAsync();
+
+            if (userDocument is null)
+            {
+                return Core.Utils.Optional.Optional<User>.Empty();
+            }
+
+            var user = User.CreateUser(
+                new UserId(userDocument.GetValue("_id").AsString),
+                new UserName(userDocument.GetValue("name").AsString),
+                new UserEmail(userDocument.GetValue("email").AsString),
+                new UserPhone(userDocument.GetValue("phone").AsString),
+                new UserType(userDocument.GetValue("userType").AsString),
+                new DeptoName(userDocument.GetValue("department").AsString)
+            );
+
+            user.SetIsActive(userDocument.GetValue("isActive").AsBoolean);
+
+            if (userDocument.TryGetValue("passwordHash", out var passwordHash))
+            {
+                user.SetPasswordHash(passwordHash.AsString);
+            }
+
+            if (userDocument.TryGetValue("isTemporaryPassword", out var isTemporaryPassword))
+            {
+                user.SetTemporaryPassword(isTemporaryPassword.AsBoolean);
+            }
+
+            if (userDocument.TryGetValue("passwordExpirationDate", out var passwordExpirationDate))
+            {
+                user.SetPasswordExpirationDate(passwordExpirationDate.ToUniversalTime());
+            }
+
+            return Core.Utils.Optional.Optional<User>.Of(user);
+        }
+
+
 
         public async Task<Result<User>> Save(User user)
         {
@@ -93,6 +156,9 @@ namespace UsersMS.src.Users.Infrastructure.Repositories
                 Department = user.GetDepartment(),
                 CreatedDate = DateTime.UtcNow,
                 UpdatedDate = DateTime.UtcNow,
+                PasswordHash = user.GetPasswordHash(),
+                IsTemporaryPassword = user.GetTemporaryPassword(),
+                PasswordExpirationDate = user.GetPasswordExpirationDate()
             };
 
             var bsonDocument = new BsonDocument
@@ -105,7 +171,10 @@ namespace UsersMS.src.Users.Infrastructure.Repositories
                 { "isActive", mongoUser.IsActive },
                 { "department", mongoUser.Department },
                 { "createdDate", mongoUser.CreatedDate },
-                { "updatedDate", mongoUser.UpdatedDate }
+                { "updatedDate", mongoUser.UpdatedDate },
+                { "passwordHash", mongoUser.PasswordHash },
+                { "isTemporaryPassword", mongoUser.IsTemporaryPassword },
+                { "passwordExpirationDate", mongoUser.PasswordExpirationDate }
             };
 
             await _userCollection.InsertOneAsync(bsonDocument);
@@ -121,17 +190,14 @@ namespace UsersMS.src.Users.Infrastructure.Repositories
             return Result<User>.Success(savedUser);
         }
 
+
         public async Task<Result<User>> Update(User user)
         {
-
             var filter = Builders<BsonDocument>.Filter.Eq("_id", user.GetId());
             var updateDefinitionBuilder = Builders<BsonDocument>.Update;
             var updateDefinitions = new List<UpdateDefinition<BsonDocument>>();
 
-            if (user.GetIsActive() != null)
-            {
-                updateDefinitions.Add(updateDefinitionBuilder.Set("isActive", user.GetIsActive()));
-            }
+            updateDefinitions.Add(updateDefinitionBuilder.Set("isActive", user.GetIsActive()));
 
             if (!string.IsNullOrEmpty(user.GetPhone()))
             {
@@ -148,16 +214,32 @@ namespace UsersMS.src.Users.Infrastructure.Repositories
                 updateDefinitions.Add(updateDefinitionBuilder.Set("userType", user.GetUserType()));
             }
 
+            if (!string.IsNullOrEmpty(user.GetPasswordHash()))
+            {
+                updateDefinitions.Add(updateDefinitionBuilder.Set("passwordHash", user.GetPasswordHash()));
+            }
+
+            updateDefinitions.Add(updateDefinitionBuilder.Set("isTemporaryPassword", user.GetTemporaryPassword()));
+
+            if (user.GetPasswordExpirationDate() != null)
+            {
+                updateDefinitions.Add(updateDefinitionBuilder.Set("passwordExpirationDate", user.GetPasswordExpirationDate()));
+            }
+
+            updateDefinitions.Add(updateDefinitionBuilder.Set("updatedDate", DateTime.UtcNow));
+
             var update = updateDefinitionBuilder.Combine(updateDefinitions);
 
             var updateResult = await _userCollection.UpdateOneAsync(filter, update);
 
             if (updateResult.ModifiedCount == 0)
             {
-                return Result<User>.Failure(new Exception("Failed to update user"));
+                return Result<User>.Failure(new Exception("No se pudo actualizar el usuario."));
             }
 
             return Result<User>.Success(user);
         }
+
+
     }
 }

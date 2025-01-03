@@ -12,5 +12,6 @@ namespace UsersMS.src.Users.Application.Repositories
         Task<List<User>> GetAll(GetAllUsersQuery data);
         Task<Optional<User>> GetById(string id);
         Task<Result<User>> Update(User user);
+        Task<Optional<User>> GetByEmail(string email);
     }
 }

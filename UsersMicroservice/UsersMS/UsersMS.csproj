@@ -8,16 +8,20 @@
 
   <ItemGroup>
     <PackageReference Include="BCrypt.Net-Next" Version="4.0.3" />
+    <PackageReference Include="dotenv.net" Version="3.2.1" />
     <PackageReference Include="DotNetEnv" Version="3.1.1" />
     <PackageReference Include="FluentValidation" Version="11.10.0" />
+    <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="8.0.0" />
     <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="8.0.2" />
     <PackageReference Include="MongoDB.Driver" Version="3.0.0" />
 	<PackageReference Include="Swashbuckle.AspNetCore" Version="6.9.0" />
+	<PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="8.3.0" />
   </ItemGroup>
 
   <ItemGroup>
     <Folder Include="src\Users\Application\Commands\UpdateUser\Types\" />
     <Folder Include="src\Users\Application\Queries\GetById\Types\" />
+    <Folder Include="src\Users\Infrastructure\Service\" />
   </ItemGroup>
 
 </Project>

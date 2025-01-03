@@ -8,6 +8,8 @@ namespace UsersMS.src.Users.Application.Commands.UpdateUser.Types
         string Phone,
         string UserType,
         string Department,
-        bool IsActive
+        bool IsActive,
+        bool IsTemporaryPassword,
+        DateTime? PasswordExpirationDate
     );
 }

@@ -8,6 +8,8 @@ namespace UsersMS.src.Users.Application.Queries.Types
         string Phone,
         string UserType,
         bool IsActive,
-        string Department
+        string Department,
+        bool IsTemporaryPassword,
+        DateTime? PasswordExpirationDate
     );
 }
