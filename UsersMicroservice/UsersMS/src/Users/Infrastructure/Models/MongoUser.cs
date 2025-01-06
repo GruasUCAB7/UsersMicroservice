@@ -16,10 +16,10 @@ namespace UsersMS.src.Users.Infrastructure.Models
         public required string Email { get; set; }
 
         [BsonElement("phone")]
-        public string Phone { get; set; }
+        public required string Phone { get; set; }
 
         [BsonElement("department")]
-        public string Department { get; set; }
+        public required string Department { get; set; }
 
         [BsonElement("passwordHash")]
         public required string PasswordHash { get; set; }
@@ -32,7 +32,6 @@ namespace UsersMS.src.Users.Infrastructure.Models
 
         [BsonElement("passwordExpirationDate")]
         public DateTime? PasswordExpirationDate { get; set; }
-
 
         [BsonElement("isActive")]
         public required bool IsActive { get; set; }

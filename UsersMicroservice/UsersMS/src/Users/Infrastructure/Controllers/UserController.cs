@@ -6,7 +6,6 @@ using UsersMS.src.Users.Application.Repositories;
 using UsersMS.Core.Application.IdGenerator;
 using FluentValidation;
 using UsersMS.Core.Application.Logger;
-using Sprache;
 using UsersMS.src.Users.Application.Queries.GetAllUsers.Types;
 using UsersMS.src.Users.Application.Queries.Types;
 using UsersMS.src.Users.Application.Queries.GetAllUsers;
@@ -14,6 +13,7 @@ using UsersMS.src.Users.Application.Queries.GetById;
 using UsersMS.src.Users.Application.Queries.GetById.Types;
 using UsersMS.src.Users.Application.Commands.UpdateUser;
 using Microsoft.AspNetCore.Authorization;
+using UsersMS.src.Users.Infrastructure.Services;
 
 namespace UsersMS.src.Users.Infrastructure.Controllers
 {
@@ -79,18 +79,24 @@ namespace UsersMS.src.Users.Infrastructure.Controllers
 
                     await emailService.SendEmail(clientData.Email, subject, body);
 
-                    return StatusCode(201, new { id = result.Unwrap().Id, temporaryPassword });
+                    return StatusCode(201, new { id = result.Unwrap().Id});
                 }
                 else
                 {
                     return StatusCode(409, result.ErrorMessage);
                 }
             }
+            catch (UnauthorizedAccessException ex)
+            {
+                _logger.Exception("Unauthorized access attempt: {Message}", ex.Message);
+                return StatusCode(403, "No tiene autorización para acceder a este recurso.");
+            }
             catch (Exception ex)
             {
+                _logger.Exception("An error occurred while creating the user.", ex.Message);
                 return StatusCode(500, ex.Message);
             }
-        }
+        }   
 
 
 
@@ -115,7 +121,7 @@ namespace UsersMS.src.Users.Infrastructure.Controllers
         }
 
         [HttpGet("{id}")]
-        [Authorize(Roles = "Admin,Operator")]
+        [Authorize(Roles = "Admin, Operator, Provider, Driver")]
         public async Task<IActionResult> GetUserById(string id)
         {
             try
@@ -172,6 +178,11 @@ namespace UsersMS.src.Users.Infrastructure.Controllers
                     _logger.Error("Failed to update user: {ErrorMessage}", result.ErrorMessage);
                     return StatusCode(409, result.ErrorMessage);
                 }
+            }
+            catch (UnauthorizedAccessException ex)
+            {
+                _logger.Error("Unauthorized access attempt: {Message}", ex.Message);
+                return StatusCode(403, "No tiene autorización para acceder a este recurso.");
             }
             catch (Exception ex)
             {
