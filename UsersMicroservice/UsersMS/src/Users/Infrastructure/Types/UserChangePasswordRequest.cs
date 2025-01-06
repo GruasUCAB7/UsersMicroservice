@@ -1,4 +1,4 @@
-namespace UsersMS.src.Users.Infrastructure.Models
+namespace UsersMS.src.Users.Infrastructure.Types
 {
     public class UserChangePasswordRequest
     {

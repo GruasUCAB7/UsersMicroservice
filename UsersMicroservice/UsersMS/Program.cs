@@ -16,6 +16,7 @@ using UsersMS.src.Users.Infrastructure.Validators;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
+using UsersMS.src.Users.Infrastructure.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -65,9 +66,6 @@ builder.Services.AddSwaggerGen(c =>
             new string[] {}
         }
     });
-
-
-
 });
 
 builder.Services.AddCors(options =>

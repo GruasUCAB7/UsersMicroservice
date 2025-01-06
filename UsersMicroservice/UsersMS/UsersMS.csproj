@@ -21,7 +21,7 @@
   <ItemGroup>
     <Folder Include="src\Users\Application\Commands\UpdateUser\Types\" />
     <Folder Include="src\Users\Application\Queries\GetById\Types\" />
-    <Folder Include="src\Users\Infrastructure\Service\" />
+    <Folder Include="src\Users\Infrastructure\Services\" />
   </ItemGroup>
 
 </Project>
