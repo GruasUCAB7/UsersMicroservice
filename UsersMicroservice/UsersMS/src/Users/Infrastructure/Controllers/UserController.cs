@@ -150,7 +150,7 @@ namespace UsersMS.src.Users.Infrastructure.Controllers
         }
 
         [HttpPatch("{id}")]
-        [Authorize(Roles = "Admin,Operator")]
+        [Authorize(Roles = "Admin, Operator, Provider, Driver")]
         public async Task<IActionResult> UpdateUser([FromBody] UpdateUserCommand data, string id)
         {
             try

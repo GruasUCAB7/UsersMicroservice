@@ -39,13 +39,25 @@ namespace UsersMS.src.Users.Infrastructure.Controllers
                     return Unauthorized("La contraseña temporal ha expirado. Solicite una nueva contraseña.");
                 }
 
-                return Unauthorized("Debe cambiar la contraseña temporal antes de continuar.");
+                var limitedToken = _jwtService.GenerateLimitedToken(user.GetId(), user.GetEmail());
+
+                return Ok(new
+                {
+                    RequiresPasswordChange = true,
+                    LimitedToken = limitedToken,
+                    Message = "Debe cambiar la contraseña temporal antes de continuar."
+                });
             }
 
-            var token = _jwtService.GenerateToken(user.GetId(), user.GetEmail(), user.GetUserType());
+            var token = _jwtService.GenerateToken(user.GetId(), user.GetName(), user.GetEmail(), user.GetPhone(), user.GetTemporaryPassword(), user.GetUserType());
 
-            return Ok(new { Token = token });
+            return Ok(new
+            {
+                RequiresPasswordChange = false,
+                Token = token
+            });
         }
+
 
         [HttpPost("change-password")]
         public async Task<IActionResult> ChangePassword([FromBody] UserChangePasswordRequest request)

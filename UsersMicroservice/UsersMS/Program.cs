@@ -71,9 +71,10 @@ builder.Services.AddSwaggerGen(c =>
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowApiGateway",
-        builder => builder.WithOrigins("https://localhost:4050")
+        builder => builder.WithOrigins("https://localhost:4000")
+                          .AllowAnyHeader()
                           .AllowAnyMethod()
-                          .AllowAnyHeader());
+                          .AllowCredentials());
 });
 
 builder.Services.AddAuthentication(options =>
@@ -122,13 +123,15 @@ if (app.Environment.IsDevelopment())
     });
 }
 
-app.UseAuthentication();
-app.UseAuthorization();
+
 app.UseHttpsRedirection();
-app.UseStaticFiles();
 app.UseRouting();
 app.UseCors("AllowApiGateway");
+app.UseAuthentication();
 app.UseAuthorization();
 app.MapControllers();
+app.UseStaticFiles();
+
+
 
 app.Run();
