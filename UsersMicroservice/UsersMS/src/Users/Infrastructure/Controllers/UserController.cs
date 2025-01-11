@@ -101,7 +101,7 @@ namespace UsersMS.src.Users.Infrastructure.Controllers
 
 
         [HttpGet]
-        [Authorize(Roles = "Admin,Operator")]
+        [Authorize(Roles = "Admin,Operator, Provider")]
         public async Task<IActionResult> GetAllUsers([FromQuery] GetAllUsersQuery data)
         {
             try
