@@ -5,7 +5,7 @@ using UsersMS.src.Users.Application.Queries.GetAllUsers.Types;
 using UsersMS.src.Users.Application.Queries.Types;
 using UsersMS.src.Users.Application.Exceptions;
 
-namespace UsersMS.src.Users.Application.Queries.GetAllUsers
+namespace UsersMS.src.Users.Application.Queries.GetAll
 {
     public class GetAllUsersQueryHandler(IUserRepository userRepository) : IService<GetAllUsersQuery, GetUserResponse[]>
     {
@@ -30,7 +30,7 @@ namespace UsersMS.src.Users.Application.Queries.GetAllUsers
                 user.GetPasswordExpirationDate()
                 )
             ).ToArray();
-            
+
             return Result<GetUserResponse[]>.Success(response);
         }
     }

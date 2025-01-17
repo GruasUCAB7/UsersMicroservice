@@ -16,7 +16,10 @@ using UsersMS.src.Users.Infrastructure.Validators;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
-using UsersMS.src.Users.Infrastructure.Services;
+using UsersMS.Core.Infrastructure.EmailSender;
+using UsersMS.Core.Application.EmailSender;
+using UsersMS.Core.Application.Services.JwtService;
+using UsersMS.Core.Infrastructure.JwtService;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -30,6 +33,8 @@ builder.Services.AddTransient<IValidator<CreateUserCommand>, CreateUserValidator
 builder.Services.AddTransient<IValidator<UpdateUserCommand>, UpdateUserValidator>();
 builder.Services.AddScoped<IUserRepository, MongoUserRepository>();
 builder.Services.AddTransient<IdGenerator<string>, GuidGenerator>();
+builder.Services.AddTransient<IEmailSender, EmailService>();
+builder.Services.AddTransient<IJwtService, JwtService>();
 builder.Services.AddTransient<ICrypto, BcryptCryptoService>();
 builder.Services.AddScoped<ILoggerContract, LoggerAspect>();
 
@@ -41,7 +46,6 @@ builder.Services.AddSwaggerGen(c =>
         Description = "Endpoints de UsersMicroservice",
     });
 
-    // Configuración de seguridad para JWT
     c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
     {
         Name = "Authorization",

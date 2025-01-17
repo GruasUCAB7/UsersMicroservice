@@ -4,6 +4,6 @@
     {
         Task<string> Encrypt(string value);
 
-        Task<bool> Compare(string text, string encrypted);
+        bool Compare(string text, string encrypted);
     }
 }

@@ -4,16 +4,18 @@ using System.Security.Claims;
 using UsersMS.src.Users.Application.Repositories;
 using System.IdentityModel.Tokens.Jwt;
 using UsersMS.src.Users.Infrastructure.Types;
-using UsersMS.src.Users.Infrastructure.Services;
+using UsersMS.Core.Application.EmailSender;
+using UsersMS.Core.Application.EmailSender.Types;
+using UsersMS.Core.Application.Services.JwtService;
 
 namespace UsersMS.src.Users.Infrastructure.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    public class AuthController(IUserRepository userRepository, JwtService jwtService) : ControllerBase
+    public class AuthController(IUserRepository userRepository, IJwtService jwtService) : ControllerBase
     {
         private readonly IUserRepository _userRepository = userRepository;
-        private readonly JwtService _jwtService = jwtService;
+        private readonly IJwtService _jwtService = jwtService;
 
         [HttpPost("login")]
         public async Task<IActionResult> Login([FromBody] UserLoginRequest loginRequest)
@@ -70,10 +72,6 @@ namespace UsersMS.src.Users.Infrastructure.Controllers
             }
 
             var user = userOptional.Unwrap();
-
-            Console.WriteLine($"IsTemporaryPassword: {user.GetTemporaryPassword()}");
-            Console.WriteLine($"PasswordExpirationDate: {user.GetPasswordExpirationDate()}");
-            Console.WriteLine($"CurrentDateTime: {DateTime.UtcNow}");
 
             if (user.GetTemporaryPassword())
             {
@@ -153,7 +151,7 @@ namespace UsersMS.src.Users.Infrastructure.Controllers
         [HttpPost("forgot-password")]
         public async Task<IActionResult> ForgotPassword(
         [FromBody] ForgotPasswordRequest request,
-        [FromServices] EmailService emailService)
+        [FromServices] IEmailSender emailSender)
         {
             try
             {
@@ -185,13 +183,14 @@ namespace UsersMS.src.Users.Infrastructure.Controllers
 
                 string subject = "Restablecimiento de contraseña";
                 string body = $@"
-            <h1>Hola {user.GetName()},</h1>
-            <p>Hemos generado una nueva contraseña temporal para ti.</p>
-            <p><b>Contraseña temporal: {newTemporaryPassword}</b></p>
-            <p>Esta contraseña es válida solo por 1 hora. Por favor, úsala para iniciar sesión y cámbiala inmediatamente.</p>
-            <p>Saludos,<br>El equipo de Gruas UCAB</p>";
+                <h1>Hola {user.GetName()},</h1>
+                <p>Hemos generado una nueva contraseña temporal para ti.</p>
+                <p><b>Contraseña temporal: {newTemporaryPassword}</b></p>
+                <p>Esta contraseña es válida solo por 1 hora. Por favor, úsaela para iniciar sesión y cámbiela inmediatamente.</p>
+                <p>Saludos,<br>El equipo de Gruas UCAB</p>";
+                var emailSenderData = new EmailSenderDto(user.GetEmail(), subject, body);
 
-                await emailService.SendEmail(user.GetEmail(), subject, body);
+                await emailSender.SendEmail(emailSenderData);
 
                 return Ok("Se ha enviado una nueva contraseña temporal a tu correo.");
             }

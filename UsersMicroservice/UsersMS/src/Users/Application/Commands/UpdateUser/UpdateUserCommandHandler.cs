@@ -53,7 +53,7 @@ namespace UsersMS.src.Users.Application.Commands.UpdateUser
             var updateResult = await _userRepository.Update(user);
             if (updateResult.IsFailure)
             {
-                return Result<UpdateUserResponse>.Failure(new Exception("The user could not be updated correctly"));
+                return Result<UpdateUserResponse>.Failure(new UserUpdateFailedException());
             }
 
             var response = new UpdateUserResponse(

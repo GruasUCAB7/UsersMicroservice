@@ -1,10 +1,6 @@
 ﻿namespace UsersMS.src.Users.Application.Exceptions
 {
-    public class UserAlreadyExistException : ApplicationException
+    public class UserAlreadyExistException(string email) : ApplicationException($"User with email {email} already exists")
     {
-        public UserAlreadyExistException(string email)
-            : base($"User with email {email} already exists")
-        {
-        }
     }
 }
