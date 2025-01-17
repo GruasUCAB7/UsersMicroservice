@@ -3,25 +3,24 @@ using System.Security.Claims;
 using System.Text;
 using DotNetEnv;
 using Microsoft.IdentityModel.Tokens;
+using UsersMS.Core.Application.Services.JwtService;
 
-namespace UsersMS.src.Users.Infrastructure.Services
+namespace UsersMS.Core.Infrastructure.JwtService
 {
-    public class JwtService(IConfiguration configuration)
+    public class JwtService : IJwtService
     {
-        private readonly IConfiguration _configuration = configuration;
-
         public string GenerateToken(string userId, string name, string email, string phone, bool isTemporaryPassword, string role)
         {
             var claims = new[]
             {
-            new Claim(JwtRegisteredClaimNames.Sub, userId),
-            new Claim(JwtRegisteredClaimNames.Name, name),
-            new Claim(JwtRegisteredClaimNames.Email, email),
-            new Claim(JwtRegisteredClaimNames.PhoneNumber, phone),
-            new Claim("isTemporaryPassword", isTemporaryPassword.ToString().ToLower()),
-            new Claim(ClaimTypes.Role, role),
-            new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
-        };
+                new Claim(JwtRegisteredClaimNames.Sub, userId),
+                new Claim(JwtRegisteredClaimNames.Name, name),
+                new Claim(JwtRegisteredClaimNames.Email, email),
+                new Claim(JwtRegisteredClaimNames.PhoneNumber, phone),
+                new Claim("isTemporaryPassword", isTemporaryPassword.ToString().ToLower()),
+                new Claim(ClaimTypes.Role, role),
+                new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
+            };
 
 
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Env.GetString("JWT_KEY")));

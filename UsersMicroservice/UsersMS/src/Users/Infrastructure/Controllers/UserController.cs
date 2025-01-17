@@ -8,12 +8,13 @@ using FluentValidation;
 using UsersMS.Core.Application.Logger;
 using UsersMS.src.Users.Application.Queries.GetAllUsers.Types;
 using UsersMS.src.Users.Application.Queries.Types;
-using UsersMS.src.Users.Application.Queries.GetAllUsers;
 using UsersMS.src.Users.Application.Queries.GetById;
 using UsersMS.src.Users.Application.Queries.GetById.Types;
 using UsersMS.src.Users.Application.Commands.UpdateUser;
 using Microsoft.AspNetCore.Authorization;
-using UsersMS.src.Users.Infrastructure.Services;
+using UsersMS.src.Users.Application.Queries.GetAll;
+using UsersMS.Core.Application.EmailSender;
+using UsersMS.Core.Application.EmailSender.Types;
 
 namespace UsersMS.src.Users.Infrastructure.Controllers
 {
@@ -38,7 +39,7 @@ namespace UsersMS.src.Users.Infrastructure.Controllers
         [Authorize(Roles = "Admin,Operator")]
         public async Task<IActionResult> CreateUser(
         [FromBody] CreateUserClientCommand clientData,
-        [FromServices] EmailService emailService)
+        [FromServices] IEmailSender emailService)
         {
             try
             {
@@ -76,8 +77,8 @@ namespace UsersMS.src.Users.Infrastructure.Controllers
                     <p>Tu contraseña temporal es: <b>{temporaryPassword}</b></p>
                     <p>Por favor, inicia sesión con esta contraseña y cámbiala antes de 24 horas.</p>
                     <p>Saludos,<br>El equipo de Gruas UCAB</p>";
-
-                    await emailService.SendEmail(clientData.Email, subject, body);
+                    var emailSenderData = new EmailSenderDto(command.Email, subject, body);
+                    await emailService.SendEmail(emailSenderData);
 
                     return StatusCode(201, new { id = result.Unwrap().Id});
                 }
@@ -86,18 +87,12 @@ namespace UsersMS.src.Users.Infrastructure.Controllers
                     return StatusCode(409, result.ErrorMessage);
                 }
             }
-            catch (UnauthorizedAccessException ex)
-            {
-                _logger.Exception("Unauthorized access attempt: {Message}", ex.Message);
-                return StatusCode(403, "No tiene autorización para acceder a este recurso.");
-            }
             catch (Exception ex)
             {
                 _logger.Exception("An error occurred while creating the user.", ex.Message);
                 return StatusCode(500, ex.Message);
             }
         }   
-
 
 
         [HttpGet]
@@ -132,7 +127,6 @@ namespace UsersMS.src.Users.Infrastructure.Controllers
 
                 var user = result.Unwrap();
 
-                Console.WriteLine(user);
                 if (user == null || user.Id != id)
                 {
                     _logger.Error("User not found: {UserId}", id);
@@ -178,11 +172,6 @@ namespace UsersMS.src.Users.Infrastructure.Controllers
                     _logger.Error("Failed to update user: {ErrorMessage}", result.ErrorMessage);
                     return StatusCode(409, result.ErrorMessage);
                 }
-            }
-            catch (UnauthorizedAccessException ex)
-            {
-                _logger.Error("Unauthorized access attempt: {Message}", ex.Message);
-                return StatusCode(403, "No tiene autorización para acceder a este recurso.");
             }
             catch (Exception ex)
             {

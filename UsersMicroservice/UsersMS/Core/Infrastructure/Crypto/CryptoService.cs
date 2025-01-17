@@ -9,9 +9,9 @@ namespace UsersMS.Core.Infrastructure.Crypto
             return Task.FromResult(BCrypt.Net.BCrypt.HashPassword(value));
         }
 
-        public Task<bool> Compare(string text, string encrypted)
+        public bool Compare(string text, string encrypted)
         {
-            return Task.FromResult(BCrypt.Net.BCrypt.Verify(text, encrypted));
+            return BCrypt.Net.BCrypt.Verify(text, encrypted);
         }
     }
 }

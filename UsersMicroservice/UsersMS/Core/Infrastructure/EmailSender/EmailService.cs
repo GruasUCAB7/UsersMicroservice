@@ -1,14 +1,14 @@
 using DotNetEnv;
 using System.Net;
 using System.Net.Mail;
+using UsersMS.Core.Application.EmailSender;
+using UsersMS.Core.Application.EmailSender.Types;
 
-namespace UsersMS.src.Users.Infrastructure.Services
+namespace UsersMS.Core.Infrastructure.EmailSender
 {
-    public class EmailService(IConfiguration configuration)
+    public class EmailService : IEmailSender
     {
-        private readonly IConfiguration _configuration = configuration;
-
-        public async Task SendEmail(string recipientEmail, string subject, string body)
+        public async Task SendEmail(EmailSenderDto data)
         {
             var smtpHost = Env.GetString("EMAIL_SMTP_HOST");
             var smtpPort = int.Parse(Env.GetString("EMAIL_SMTP_PORT"));
@@ -25,12 +25,12 @@ namespace UsersMS.src.Users.Infrastructure.Services
                 var mailMessage = new MailMessage
                 {
                     From = new MailAddress(senderEmail, senderName),
-                    Subject = subject,
-                    Body = body,
+                    Subject = data.Subject,
+                    Body = data.Body,
                     IsBodyHtml = true
                 };
 
-                mailMessage.To.Add(recipientEmail);
+                mailMessage.To.Add(data.RecipientEmail);
 
                 await smtpClient.SendMailAsync(mailMessage);
             }

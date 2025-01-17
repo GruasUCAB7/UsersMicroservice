@@ -1,9 +1,6 @@
-using System;
-
 namespace UsersMS.src.Users.Application.Exceptions
 {
-    public class UserUpdateFailedException : Exception
+    public class UserUpdateFailedException() : Exception("The user could not be updated correctly")
     {
-        public UserUpdateFailedException(string message) : base(message) { }
     }
 }
