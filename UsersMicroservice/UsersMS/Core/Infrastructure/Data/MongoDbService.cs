@@ -30,5 +30,10 @@ namespace UsersMS.Core.Infrastructure.Data
         {
             return _database.GetCollection<BsonDocument>("user");
         }
+
+        public IMongoCollection<BsonDocument> GetTokenCollection()
+        {
+            return _database.GetCollection<BsonDocument>("notificationToken");
+        }
     }
 }

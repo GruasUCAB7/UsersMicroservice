@@ -15,6 +15,8 @@ using Microsoft.AspNetCore.Authorization;
 using UsersMS.src.Users.Application.Queries.GetAll;
 using UsersMS.Core.Application.EmailSender;
 using UsersMS.Core.Application.EmailSender.Types;
+using UsersMS.src.Users.Application.Commands.AddNotificationToken.Types;
+using UsersMS.src.Users.Application.Commands.AddNotificationToken;
 
 namespace UsersMS.src.Users.Infrastructure.Controllers
 {
@@ -26,14 +28,23 @@ namespace UsersMS.src.Users.Infrastructure.Controllers
         IdGenerator<string> idGenerator,
         IValidator<CreateUserCommand> validatorCreate,
         IValidator<UpdateUserCommand> validatorUpdate,
+        IValidator<AddNotificationTokenCommand> validatorAddToken,
         ILoggerContract logger) : ControllerBase
     {
         private readonly IUserRepository _userRepo = userRepo;
         private readonly IdGenerator<string> _idGenerator = idGenerator;
         private readonly IValidator<CreateUserCommand> _validatorCreate = validatorCreate;
         private readonly IValidator<UpdateUserCommand> _validatorUpdate = validatorUpdate;
+        private readonly IValidator<AddNotificationTokenCommand> _validatorAddToken = validatorAddToken;
         private readonly ILoggerContract _logger = logger;
 
+
+        //[HttpGet]
+        //[Authorize(Roles = "Admin, Operator, Provider, Driver")]
+        //public IActionResult Get()
+        //{
+        //    return Ok(new { status = "Healthy" });
+        //}
 
         [HttpPost]
         [Authorize(Roles = "Admin,Operator")]
@@ -176,6 +187,42 @@ namespace UsersMS.src.Users.Infrastructure.Controllers
             catch (Exception ex)
             {
                 _logger.Exception("An error occurred while updating the user.", ex.Message);
+                return StatusCode(500, ex.Message);
+            }
+        }
+
+        [HttpPost("addNotificationToken")]
+        [Authorize(Roles = "Admin, Driver")]
+        public async Task<IActionResult> AddNotificationToken([FromBody] AddNotificationTokenCommand data)
+        {
+            try
+            {
+                var command = new AddNotificationTokenCommand(data.UserId, data.Token);
+
+                var validate = _validatorAddToken.Validate(command);
+                if (!validate.IsValid)
+                {
+                    var errors = validate.Errors.Select(e => e.ErrorMessage).ToList();
+                    return StatusCode(400, errors);
+                }
+
+                var handler = new AddNotificationTokenCommandHandler(_userRepo, _idGenerator);
+                var result = await handler.Execute(command);
+
+                if (result.IsSuccessful)
+                {
+                    _logger.Log("Token added successfully: {TokenId}", result.Unwrap().Id);
+                    return StatusCode(201, new { id = result.Unwrap().Id });
+                }
+                else
+                {
+                    _logger.Error("Failed to add the token: {ErrorMessage}", result.ErrorMessage);
+                    return StatusCode(409, result.ErrorMessage);
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.Exception("An error occurred while saving the token.", ex.Message);
                 return StatusCode(500, ex.Message);
             }
         }

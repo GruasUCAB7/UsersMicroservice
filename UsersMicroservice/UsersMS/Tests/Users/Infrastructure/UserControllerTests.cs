@@ -18,6 +18,7 @@ using UsersMS.src.Users.Application.Queries.Types;
 using UsersMS.src.Users.Application.Queries.GetById.Types;
 using UsersMS.Core.Utils.Optional;
 using UsersMS.Core.Utils.Result;
+using UsersMS.src.Users.Application.Commands.AddNotificationToken.Types;
 
 namespace UsersMS.Tests.Users.Infrastructure
 {
@@ -27,13 +28,14 @@ namespace UsersMS.Tests.Users.Infrastructure
         private readonly Mock<IdGenerator<string>> _idGeneratorMock = new Mock<IdGenerator<string>>();
         private readonly Mock<IValidator<CreateUserCommand>> _validatorCreateMock = new Mock<IValidator<CreateUserCommand>>();
         private readonly Mock<IValidator<UpdateUserCommand>> _validatorUpdateMock = new Mock<IValidator<UpdateUserCommand>>();
+        private readonly Mock<IValidator<AddNotificationTokenCommand>> _validatorAddToken = new Mock<IValidator<AddNotificationTokenCommand>>();
         private readonly Mock<ILoggerContract> _loggerMock = new Mock<ILoggerContract>();
         private readonly UserController _controller;
         private readonly Mock<IEmailSender> _emailServiceMock = new Mock<IEmailSender>();
 
         public UserControllerTests()
         {
-            _controller = new UserController(_userRepoMock.Object, _idGeneratorMock.Object, _validatorCreateMock.Object, _validatorUpdateMock.Object, _loggerMock.Object);
+            _controller = new UserController(_userRepoMock.Object, _idGeneratorMock.Object, _validatorCreateMock.Object, _validatorUpdateMock.Object, _validatorAddToken.Object, _loggerMock.Object);
         }
 
         [Fact]
