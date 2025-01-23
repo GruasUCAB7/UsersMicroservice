@@ -20,6 +20,7 @@ using UsersMS.Core.Infrastructure.EmailSender;
 using UsersMS.Core.Application.EmailSender;
 using UsersMS.Core.Application.Services.JwtService;
 using UsersMS.Core.Infrastructure.JwtService;
+using UsersMS.src.Users.Application.Commands.AddNotificationToken.Types;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -31,6 +32,7 @@ builder.Services.AddControllers();
 builder.Services.AddSingleton<MongoDbService>();
 builder.Services.AddTransient<IValidator<CreateUserCommand>, CreateUserValidator>();
 builder.Services.AddTransient<IValidator<UpdateUserCommand>, UpdateUserValidator>();
+builder.Services.AddTransient<IValidator<AddNotificationTokenCommand>, AddNotificationTokenValidator>();
 builder.Services.AddScoped<IUserRepository, MongoUserRepository>();
 builder.Services.AddTransient<IdGenerator<string>, GuidGenerator>();
 builder.Services.AddTransient<IEmailSender, EmailService>();
@@ -134,8 +136,5 @@ app.UseCors("AllowApiGateway");
 app.UseAuthentication();
 app.UseAuthorization();
 app.MapControllers();
-app.UseStaticFiles();
-
-
 
 app.Run();

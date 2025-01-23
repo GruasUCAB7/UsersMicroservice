@@ -2,6 +2,7 @@
 using MongoDB.Driver;
 using UsersMS.Core.Infrastructure.Data;
 using UsersMS.Core.Utils.Result;
+using UsersMS.src.Users.Application.Models;
 using UsersMS.src.Users.Application.Queries.GetAllUsers.Types;
 using UsersMS.src.Users.Application.Repositories;
 using UsersMS.src.Users.Domain;
@@ -13,6 +14,7 @@ namespace UsersMS.src.Users.Infrastructure.Repositories
     public class MongoUserRepository(MongoDbService mongoDbService) : IUserRepository
     {
         private readonly IMongoCollection<BsonDocument> _userCollection = mongoDbService.GetUserCollection();
+        private readonly IMongoCollection<BsonDocument> _tokenCollection = mongoDbService.GetTokenCollection();
 
         public async Task<bool> ExistByEmail(string email)
         {
@@ -240,6 +242,39 @@ namespace UsersMS.src.Users.Infrastructure.Repositories
             return Result<User>.Success(user);
         }
 
+        public async Task<bool> ExistTokenByUserId(string id)
+        {
+            var filter = Builders<BsonDocument>.Filter.Eq("userId", id);
+            var result = await _tokenCollection.Find(filter).FirstOrDefaultAsync();
+            return result != null;
+        }
 
+        public async Task<Result<NotificationToken>> SaveToken(NotificationToken token)
+        {
+            var mongoNotificationToken = new MongoNotificationToken
+            {
+                Id = token.Id,
+                UserId = token.UserId,
+                Token = token.Token
+            };
+
+            var bsonDocument = new BsonDocument
+            {
+                { "_id", mongoNotificationToken.Id },
+                { "userId", mongoNotificationToken.UserId },
+                { "token", mongoNotificationToken.Token }
+            };
+
+            await _tokenCollection.InsertOneAsync(bsonDocument);
+
+          var savedToken = new NotificationToken
+            {
+                Id = token.Id,
+                UserId = token.UserId,
+                Token = token.Token
+            };
+
+            return Result<NotificationToken>.Success(savedToken);
+        }
     }
 }
